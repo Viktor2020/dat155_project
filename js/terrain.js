@@ -1,53 +1,50 @@
 "use strict";
 
-// TODO: integrate better with THREEJS, it's kinda adhoc right now.
+class Terrain extends Object3D {
 
-class Terrain {
+    constructor({ size = 1000, levelsOfDetail = 3, nodePolyCount = 32, height = 200 }) {
 
-    constructor() {
-    	let width = 1000;
-    	let height = 1000;
+    	this.levelsOfDetail = levelsOfDetail;
+    	this.nodePolyCount = nodePolyCount;
+    	this.height = height;
 
-    	this.object = new THREE.Object3D();
-
-    	this.numberOfLevels = 3;
     	this.tree = new Quadtree({
     		x: 0,
     		y: 0,
-    		width: 1000,
-    		height: 1000
-    	}, this.numberOfLevels);
+    		width: size,
+    		height: size
+    	}, levelsOfDetail);
 
-    	this.data = []; // array of heightmaps, subscript indicating the level of detail.
-    	// Length should be equal to numberOfLevels.
+    	this.data = []; // heightmap data.
 
     	// build geometry
     	this.buildGeometry(this.tree);
     }
 
-    buildGeometry(quadtree, level = 0) {
-    	let lod = this.numberOfLevels - level;
-
+    buildGeometry(quadtree) {
     	quadtree.nodes.forEach((node) => {
 
-    		let geometry = new THREE.PlaneBufferGeometry(node.width, node.height, 32);
-    		
+    		let geometry = new THREE.PlaneBufferGeometry(node.width, node.height, this.nodePolyCount);
     		let vertices = geometry.attributes.position.array;
 
     		// TODO: Here we somehow need to correctly get the height from the heightmap, given the bounds of the node.
 			for (let i = 0, j = 0; i < vertices.length; i++, j += 3) {
-				vertices[j + 1] = data[lod][i] * 10;
+				vertices[j + 1] = data[i] * this.height;
 			}
+
 
 			let material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
     		node.mesh = new THREE.Mesh(geometry, material);
 
-    		// position mesh according to 
+    		// position mesh according to quadtree.
     		node.mesh.position.x = node.x;
     		node.mesh.position.y = node.y;
 
-    		// should be this.add ;)
-    		this.object.add(node.mesh);
+    		node.mesh.visible = false;
+
+    		this.add(node.mesh);
+
+    		this.buildGeometry(node); // do the same for all the children.
     	});
     }
 
@@ -55,10 +52,13 @@ class Terrain {
     	let nodes = tree.get(position.x, position.y);
 
     	for every node in tree:
-    		set visibility to false
-    		if in nodes: set visibility to true
+    		set mesh visibility to false
+    	
+    	for every node in nodes:
+    		set mesh visibility to false;
     }
 }
+
 
 /**
  * Quadtree
