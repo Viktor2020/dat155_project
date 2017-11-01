@@ -76,31 +76,47 @@ class State {
 class App {
 
     loadModels() {
-        // instantiate the loader
-        let loader = new THREE.OBJLoader2();
+        return new Promise((resolve, reject) => {
+            // instantiate the loader
+            let loader = new THREE.OBJLoader2();
 
-        let models = {};
+            let models = [
+                tree: {
+                    url: 'blabla/tree.obj',
+                    object: null
+                },
+                rock: {
+                    url: 'blabla/rock.obj',
+                    object: null
+                },
+            ];
 
-        let modelUrls = [
-            'tree.obj',
-            'stein.obj'
-        ];
+            let promises = [];
 
-        modelUrls.forEach((url) => {
-            // load a resource from provided URL
-            loader.load(url, (object) => {
-                models[url] = object;
+            models.forEach((model) => {
+                // load a resource from provided URL
+                promises.push(new Promise((resolve, reject) => {
+                    loader.load(model.url, (object) => {
+                        model.object = object;
+                        resolve(model);
+                    });
+                }));
             });
-        });
 
-        return models;
+            return Promise.all(promises);
+        });
     }
 
     constructor() {
         this.state = State.getInstance(); // get the state
 
         // last in modeller:
-        this.models = this.loadModels();
+        this.loadModels().then((models) => {
+            // do something with the models.
+            // f.eks. scene.add(models[0]);
+        }).catch((error) => {
+            // an error occured while loading.
+        })
 
         // Create atmospheric white light
         let ambientLight = new THREE.AmbientLight(0xFFFFFF);
