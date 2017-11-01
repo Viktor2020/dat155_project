@@ -35,40 +35,6 @@ class State {
             return new State();
         }
     }
-
-    static loadTree() {
-        let objectAndMaterialLoader = new THREE.OBJMTLLoader();
-        let object;
-        objectAndMaterialLoader.load(
-            'resources/3Dmodels/lowPolyTree/lowpolytree.obj',
-            'resources/3Dmodels/lowPolyTree/lowpolytree.mtl',
-            function (loadedObject) {
-                "use strict";
-                // Custom function to handle what's supposed to happen once we've loaded the model
-
-                let bbox = new THREE.Box3().setFromObject(loadedObject);
-                console.log(bbox);
-
-                for (let i = 0; i < numObjects; ++i) {
-                    object = loadedObject.clone();
-
-                    // We should know where the bottom of our object is
-                    object.position.copy(generatedAndValidPositions[i]);
-                    object.position.y -= bbox.min.y*generatedAndValidScales[i];
-
-                    object.scale.set(
-                        generatedAndValidScales[i],
-                        generatedAndValidScales[i],
-                        generatedAndValidScales[i]
-                    );
-
-                    object.name = "LowPolyTree";
-
-                    //terrain.add(object);
-                }
-            }, onProgress, onError);
-        return object;
-    }
 }
 
 
