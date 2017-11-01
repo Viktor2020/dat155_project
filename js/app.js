@@ -45,11 +45,12 @@ class App {
         this.state = State.getInstance(); // get the state
 
         // Create atmospheric white light
-        let amb = new THREE.AmbientLight(0xFFFFFF);
-        this.state.scene.add(amb);
+        let ambientLight = new THREE.AmbientLight(0xFFFFFF);
+        this.state.scene.add(ambientLight);
 
-        let terrain = new Terrain({...});
-        this.state.scene.add(terrain);
+        // example:
+        //let terrain = new Terrain({...});
+        //this.state.scene.add(terrain);
 
         // Add camera to scene
         this.state.scene.add(this.state.camera);
@@ -70,6 +71,8 @@ class App {
 
     // Render the scene
     loop() {
+        // perform updates, animations etc.:
+        // here
 
         // Perform the render of the scene from our camera's point of view
         this.state.renderer.render(this.state.scene, this.state.camera);
@@ -89,5 +92,3 @@ window.requestAnimFrame = (() => {
             window.setTimeout(callback, 1000 / 60);
         };
 })();
-
-
