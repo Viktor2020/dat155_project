@@ -40,8 +40,8 @@ class State {
         let objectAndMaterialLoader = new THREE.OBJMTLLoader();
         let object;
         objectAndMaterialLoader.load(
-            'models/lowPolyTree/lowpolytree.obj',
-            'models/lowPolyTree/lowpolytree.mtl',
+            'resources/3Dmodels/lowPolyTree/lowpolytree.obj',
+            'resources/3Dmodels/lowPolyTree/lowpolytree.mtl',
             function (loadedObject) {
                 "use strict";
                 // Custom function to handle what's supposed to happen once we've loaded the model
@@ -75,6 +75,7 @@ class State {
 // entry point to our application
 class App {
 
+    //load all object models
     loadModels() {
         return new Promise((resolve, reject) => {
             // instantiate the loader
@@ -82,15 +83,16 @@ class App {
 
             let models = [
                 tree: {
-                    url: 'blabla/tree.obj',
+                    url: 'resources/3Dmodels/lowPolyTree/lowpolytree.obj',
                     object: null
                 },
                 rock: {
-                    url: 'blabla/rock.obj',
+                    url: 'resources/3Dmodels/rocks/rock.obj',
                     object: null
                 },
             ];
 
+            // Gir støtte for asynkron lasting av modeller
             let promises = [];
 
             models.forEach((model) => {
