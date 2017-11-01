@@ -36,7 +36,7 @@ class State {
         }
     }
 
-    static loadTree(){
+    static loadTree() {
         let objectAndMaterialLoader = new THREE.OBJMTLLoader();
         let object;
         objectAndMaterialLoader.load(
@@ -75,8 +75,32 @@ class State {
 // entry point to our application
 class App {
 
+    loadModels() {
+        // instantiate the loader
+        let loader = new THREE.OBJLoader2();
+
+        let models = [];
+
+        let modelUrls = [
+            'tree.obj',
+            'stein.obj'
+        ];
+
+        modelUrls.forEach((url) => {
+            // load a resource from provided URL
+            loader.load(url, (object) => {
+                models.push(object);
+            });
+        });
+
+        return models;
+    }
+
     constructor() {
         this.state = State.getInstance(); // get the state
+
+        // last in modeller:
+        this.models = this.loadModels();
 
         // Create atmospheric white light
         let ambientLight = new THREE.AmbientLight(0xFFFFFF);
