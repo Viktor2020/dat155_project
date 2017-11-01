@@ -5,7 +5,7 @@ class Terrain extends Object3D {
     constructor({ size = 1000, levelsOfDetail = 3, nodePolyCount = 32, height = 200 }) {
 
     	this.levelsOfDetail = levelsOfDetail;
-    	this.nodePolyCount = nodePolyCount;
+    	this.nodePolyCount = nodePolyCount; // polycount per node, in the quadtree. (at level 3, (4^3)*32 = 2048)
     	this.height = height;
 
     	this.tree = new Quadtree({
@@ -49,13 +49,17 @@ class Terrain extends Object3D {
     }
 
     update(position) {
+
+    	// clear visibility
+    	this.children.forEach((child) => {
+    		child.visible = false;
+    	});
+
     	let nodes = tree.get(position.x, position.y);
 
-    	for every node in tree:
-    		set mesh visibility to false
-    	
-    	for every node in nodes:
-    		set mesh visibility to false;
+    	nodes.forEach((node) => {
+    		node.visible = true;
+    	})
     }
 }
 
