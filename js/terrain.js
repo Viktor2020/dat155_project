@@ -2,35 +2,55 @@
 
 class Terrain extends THREE.Object3D {
 
-	static getHeightData(image) {
+	static loadHeightMapData(url) {
+		if (!url) {
+			return Promise.reject('No URL was specified.');
+		}
+		return new Promise((resolve, reject) => {
+			let image = new Image();
+			image.src = url;
 
-	    let canvas = document.createElement('canvas');
-	    canvas.width = image.width;
-	    canvas.height = image.height;
+			image.addEventListener('load', () => {
+				let canvas = document.createElement('canvas');
+			    canvas.width = image.width;
+			    canvas.height = image.height;
 
-	    let context = canvas.getContext('2d');
+			    let context = canvas.getContext('2d');
 
-	    let size = image.width * image.height;
-	    let data = new Float32Array(size);
+			    let size = image.width * image.height;
+			    let data = new Uint8Array(size);
 
-	    context.drawImage(image, 0, 0);
+			    context.drawImage(image, 0, 0);
 
-	    var imgd = context.getImageData(0, 0, image.width, image.height);
-	    var pix = imgd.data;
+			    let imageData = context.getImageData(0, 0, image.width, image.height).data;
 
-	    console.log(pix);
+			    imageData.forEach((a, i) => {
+			    	if (i % 4 === 0) { // only extract the first component of (r,g,b,a).
+			    		data[Math.floor(i / 4)] = a;
+			    	}
+			    });
 
-	    for (let i = 0; i < size * 4; i += 4) {
-	    	data[i % 4] = pix[i];
-	    }
+			    resolve(data);
+			});
 
-	    return data;
+			image.addEventListener('error', () => {
+				reject('Unable to load image. Make sure the URL is correct (' + image.src + ').');
+			});
+		});
 	}
 
+	/**
+	 * Constructs a Terrain node.
+	 * @param  {Promise} options.data The heightmap date to build our geometry from.
+	 * @param  {Number} options.size
+	 * @param  {Number} options.levelsOfDetail
+	 * @param  {Number} options.nodePolyCount
+	 * @param  {Number} options.height
+	 */
     constructor({ data, size = 1000, levelsOfDetail = 3, nodePolyCount = 32, height = 200 }) {
     	super();
 
-    	this.data = []; // heightmap data.
+    	
     	this.levelsOfDetail = levelsOfDetail;
     	this.nodePolyCount = nodePolyCount; // polycount per node, in the quadtree. (at level 3, (4^3)*32 = 2048)
     	this.height = height;
@@ -43,6 +63,7 @@ class Terrain extends THREE.Object3D {
     	}, levelsOfDetail);
 
     	// build geometry
+    	this.data = []; // heightmap data.
     	this.buildGeometry(this.tree);
     }
 
@@ -56,7 +77,6 @@ class Terrain extends THREE.Object3D {
 			for (let i = 0, j = 0; i < vertices.length; i++, j += 3) {
 				vertices[j + 1] = data[i] * this.height;
 			}
-
 
 			let material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
     		node.mesh = new THREE.Mesh(geometry, material);
@@ -83,8 +103,8 @@ class Terrain extends THREE.Object3D {
     	let nodes = tree.get(position.x, position.y);
 
     	nodes.forEach((node) => {
-    		node.visible = true;
-    	})
+    		node.mesh.visible = true;
+    	});
     }
 }
 
