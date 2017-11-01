@@ -1,9 +1,36 @@
 "use strict";
 
-class Terrain extends Object3D {
+class Terrain extends THREE.Object3D {
 
-    constructor({ size = 1000, levelsOfDetail = 3, nodePolyCount = 32, height = 200 }) {
+	static getHeightData(image) {
 
+	    let canvas = document.createElement('canvas');
+	    canvas.width = image.width;
+	    canvas.height = image.height;
+
+	    let context = canvas.getContext('2d');
+
+	    let size = image.width * image.height;
+	    let data = new Float32Array(size);
+
+	    context.drawImage(image, 0, 0);
+
+	    var imgd = context.getImageData(0, 0, image.width, image.height);
+	    var pix = imgd.data;
+
+	    console.log(pix);
+
+	    for (let i = 0; i < size * 4; i += 4) {
+	    	data[i % 4] = pix[i];
+	    }
+
+	    return data;
+	}
+
+    constructor({ data, size = 1000, levelsOfDetail = 3, nodePolyCount = 32, height = 200 }) {
+    	super();
+
+    	this.data = []; // heightmap data.
     	this.levelsOfDetail = levelsOfDetail;
     	this.nodePolyCount = nodePolyCount; // polycount per node, in the quadtree. (at level 3, (4^3)*32 = 2048)
     	this.height = height;
@@ -14,8 +41,6 @@ class Terrain extends Object3D {
     		width: size,
     		height: size
     	}, levelsOfDetail);
-
-    	this.data = []; // heightmap data.
 
     	// build geometry
     	this.buildGeometry(this.tree);

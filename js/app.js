@@ -44,10 +44,12 @@ class App {
     constructor() {
         this.state = State.getInstance(); // get the state
 
-
         // Create atmospheric white light
         let amb = new THREE.AmbientLight(0xFFFFFF);
         this.state.scene.add(amb);
+
+        let terrain = new Terrain({...});
+        this.state.scene.add(terrain);
 
         // Add camera to scene
         this.state.scene.add(this.state.camera);
