@@ -48,30 +48,38 @@ class App {
             let loader = new THREE.OBJLoader2();
 
             let models = [
-                tree: {
+                //Tree:
+                {
                     url: 'resources/3Dmodels/lowPolyTree/lowpolytree.obj',
-                    object: null
+                    object: null,
+                    objName: 'lowPolyTree'
                 },
-                rock: {
+                //rock:
+                {
                     url: 'resources/3Dmodels/rocks/rock.obj',
-                    object: null
-                },
+                    object: null,
+                    objName: 'rock'
+                }
             ];
 
-            // Gir støtte for asynkron lasting av modeller
+            // Gir støtte for asynkron lasting av modeller sammen med loadModels().then(models)
             let promises = [];
 
             models.forEach((model) => {
-                // load a resource from provided URL
+                //Wrap in a new promise()
                 promises.push(new Promise((resolve, reject) => {
+                    // load a resource from provided UR
                     loader.load(model.url, (object) => {
                         model.object = object;
+                        model.object.name = model.objName;
+                        //unwraping function for promises, returns a moddel
                         resolve(model);
                     });
                 }));
             });
 
-            return Promise.all(promises);
+            // returns the promise of resolving all the promises.
+            return Promise.all(promises);  // This is a fucking temporal distortion!!!!
         });
     }
 
