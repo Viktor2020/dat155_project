@@ -79,7 +79,7 @@ class App {
         // instantiate the loader
         let loader = new THREE.OBJLoader2();
 
-        let models = [];
+        let models = {};
 
         let modelUrls = [
             'tree.obj',
@@ -89,7 +89,7 @@ class App {
         modelUrls.forEach((url) => {
             // load a resource from provided URL
             loader.load(url, (object) => {
-                models.push(object);
+                models[url] = object;
             });
         });
 
