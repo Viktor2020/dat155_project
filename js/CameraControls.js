@@ -7,17 +7,18 @@
  * W A S D to navigate xz-axis.
  * Space to move up y-axis and c to move down y-axis
  */
-class Camera {
+class CameraControls {
     /**
      *
      * @param camera a Threejs camera object
-     * @param pointerTarget element id, should be the id of the element that contains the graphics. Pointer lock will be requested when this element is clicked.
+     * @param pointerTarget domElement. Pointer lock will be requested when this element is clicked.
      */
-    constructor(camera, pointerTarget = 'container') {
-        this.controls = new THREE.PointerLockControls( camera );
-        this.camera = this.controls.getObject();
+    constructor(camera, pointerTarget, movementSpeed = 25) {
+        this.controls = new THREE.PointerLockControls(camera);
+        this.object = this.controls.getObject();
+        this.movementSpeed = movementSpeed;
 
-        //element id, the element will be used as a button to activate pointerLock
+        //the element will be used as a button to activate pointerLock
         this.pointerTarget = pointerTarget;
 
         this.moveForward = false;
@@ -27,30 +28,23 @@ class Camera {
         this.moveUp = false;
         this.moveDown = false;
 
-        document.addEventListener( 'keydown', this.onKeyDown.bind(this), false );
-        document.addEventListener( 'keyup', this.onKeyUp.bind(this), false );
+        document.addEventListener('keydown', this.onKeyDown.bind(this), false );
+        document.addEventListener('keyup', this.onKeyUp.bind(this), false );
 
         this.preparePointerLock();
 
     }//end constructor
-
-
-    /**
-     * returns the controllers camera object. Use this object to make changes to the camera.
-     * @returns {this.controller.getObject()}
-     */
-    getObject() {return this.camera;}
 
     //add event listeners for locking and unlocking the pointer
     /**
      * Make browser is compatible with pointerLocks, adds eventListeners.
      */
     preparePointerLock() {
-        this.container = document.getElementById( 'container' );
+        
         this.havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
         this.element = document.body;
 
-        if ( this.havePointerLock ) {
+        if (this.havePointerLock) {
 
             // Hook pointer lock state change events
             document.addEventListener( 'pointerlockchange', this.pointerlockchange.bind(this), false );
@@ -60,11 +54,8 @@ class Camera {
             document.addEventListener( 'mozpointerlockerror', this.pointerlockerror.bind(this), false );
             document.addEventListener( 'webkitpointerlockerror', this.pointerlockerror.bind(this), false );
 
-            this.container.addEventListener( 'click', this.lockPointer.bind(this) , false );
-        } else {
-
+            this.pointerTarget.addEventListener( 'click', this.lockPointer.bind(this) , false );
         }
-
     }
 
     //called when click event happens, locks the pointer for use in animation
@@ -82,29 +73,28 @@ class Camera {
      * Event handler for pointerLockError, called when an error occurs
      * @param event
      */
-    pointerlockerror( event ) {
-
+    pointerlockerror(event) {
+        // do something?
     }
 
     /**
      * Event handler for pointerLockChange, called when pointer is locked or released
      * @param event
      */
-    pointerlockchange( event ) {
-        if ( document.pointerLockElement === this.element || document.mozPointerLockElement === this.element || document.webkitPointerLockElement === this.element ) {
+    pointerlockchange(event) {
+        if (document.pointerLockElement === this.element || document.mozPointerLockElement === this.element || document.webkitPointerLockElement === this.element) {
             this.controls.enabled = true;
         } else {
             this.controls.enabled = false;
         }
     }
 
-
     /**
-     * Should be used in the update / animate function and be called every frame.
+     * Should be used in the update function and be called every frame.
      * Moves the camera if buttons are pressed and pointer is locked.
      * @param delta Time between this frame and the last, used to make movement consistent between frames.
      */
-    animate(delta) {
+    update(delta) {
 
         //as long as pointer is not locked in, controls will not work
         if(!this.controls.enabled) return;
@@ -115,20 +105,20 @@ class Camera {
 
         //add velocity in a particular direction
         //multiply by delta to ensure same speed between frames
-        x += this.moveRight ? 10 : 0;
-        x -= this.moveLeft ? 10 : 0;
+        let mvspeed = this.movementSpeed;
+        
+        x += this.moveRight ? mvspeed : 0;
+        x -= this.moveLeft ? mvspeed : 0;
 
-        z -= this.moveForward ? 10 : 0;
-        z += this.moveBackward ? 10 : 0;
+        z -= this.moveForward ? mvspeed : 0;
+        z += this.moveBackward ? mvspeed : 0;
 
-        y += this.moveUp ? 10 : 0;
-        y -= this.moveDown ? 10 : 0;
+        y += this.moveUp ? mvspeed : 0;
+        y -= this.moveDown ? mvspeed : 0;
 
-        //console.log(this.moveForward);
-
-        this.camera.translateX(x * delta);
-        this.camera.translateY(y * delta);
-        this.camera.translateZ(z * delta);
+        this.object.translateX(x * delta);
+        this.object.translateY(y * delta);
+        this.object.translateZ(z * delta);
 
     }
 
@@ -161,8 +151,8 @@ class Camera {
             case 67: // c
                 this.moveDown = false;
                 break;
-        }//end switch
-    }//end onKeyUp
+        }
+    }
 
     //starter bevegelse når knapp trykkes inn
     /**
@@ -193,9 +183,7 @@ class Camera {
             case 67: // c
                 this.moveDown = true;
                 break;
-        }//end switch
-    }//end onkeydown
+        }
+    }
 
-
-
-}//end class
+}

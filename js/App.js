@@ -3,11 +3,10 @@
 class App {
     constructor({ clearColor = 0xFFFFFF } = {}) {
         this.scene = new THREE.Scene();
+        this.clock = new THREE.Clock();
 
         // CAMERA
         this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.scene.add(this.camera);
-        this.camera.position.z = 150;
 
         // RENDERER
         this.renderer = new THREE.WebGLRenderer({
@@ -78,16 +77,19 @@ class App {
             });
 
             this.loop(); // start loop.
-            
+
         }).catch((error) => {
             console.log('Unable to start. An error occurred in one of the extensions: ', error);
         });
     }
 
     loop() {
+
+        let delta = this.clock.getDelta();
+
         // perform updates, animations etc.:
         for (let i = 0; i < this.updatables.length; i++) {
-            this.updatables[i](this); // TODO: pass in delta time.
+            this.updatables[i](delta, this);
         }
 
         // Perform the render of the scene from our camera's point of view
