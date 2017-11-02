@@ -1,131 +1,97 @@
 "use strict";
 
-let instance = null;
-
-class State {
-    constructor() {
-
-        // Singleton setup
-        if (instance) {
-            return instance;
-        } else {
-            instance = this;
-        }
-
-        this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+class App {
+    constructor({ clearColor = 0xFFFFFF } = {}) {
         this.scene = new THREE.Scene();
 
-        // Create renderer, set antialias to true if possible
+        // CAMERA
+        this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+        this.scene.add(this.camera);
+        this.camera.position.z = 150;
+
+        // RENDERER
         this.renderer = new THREE.WebGLRenderer({
             antialias: true
         });
 
-        document.body.appendChild(this.renderer.domElement);
+        this.renderer.setPixelRatio( window.devicePixelRatio );
+
+        // add canvas to DOM.
+        let canvas = this.renderer.domElement;
+        document.body.appendChild(canvas);
 
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-
-        return instance;
-    }
-
-    // Use this to get a reference to State object (can also just use new, same stuff, but this is alike to Java)
-    static getInstance() {
-        if (instance) {
-            return instance;
-        } else {
-            return new State();
-        }
-    }
-}
-
-
-// entry point to our application
-class App {
-
-    //load all object models
-    loadModels() {
-        return new Promise((resolve, reject) => {
-            // instantiate the loader
-            let loader = new THREE.OBJLoader2();
-
-            let models = [
-                //Tree:
-                {
-                    url: 'resources/3Dmodels/lowPolyTree/lowpolytree.obj',
-                    object: null,
-                    objName: 'lowPolyTree'
-                },
-                //rock:
-                {
-                    url: 'resources/3Dmodels/rocks/rock.obj',
-                    object: null,
-                    objName: 'rock'
-                }
-            ];
-
-            // Gir støtte for asynkron lasting av modeller sammen med loadModels().then(models)
-            let promises = [];
-
-            models.forEach((model) => {
-                //Wrap in a new promise()
-                promises.push(new Promise((resolve, reject) => {
-                    // load a resource from provided UR
-                    loader.load(model.url, (object) => {
-                        model.object = object;
-                        model.object.name = model.objName;
-                        //unwraping function for promises, returns a moddel
-                        resolve(model);
-                    });
-                }));
-            });
-
-            // returns the promise of resolving all the promises.
-            return Promise.all(promises);  // This is a fucking temporal distortion!!!!
-        });
-    }
-
-    constructor() {
-        this.state = State.getInstance(); // get the state
-
-        // last in modeller:
-        this.loadModels().then((models) => {
-            // do something with the models.
-            // f.eks. scene.add(models[0]);
-        }).catch((error) => {
-            // an error occured while loading.
-        })
-
-        // Create atmospheric white light
-        let ambientLight = new THREE.AmbientLight(0xFFFFFF);
-        this.state.scene.add(ambientLight);
-
-        // example:
-        //let terrain = new Terrain({...});
-        //this.state.scene.add(terrain);
-
-        // Add camera to scene
-        this.state.scene.add(this.state.camera);
-        this.state.camera.position.z = 50;
-
-        // Clear window to black and set size
-        this.state.renderer.setClearColor(0xFFFFFF);
+        this.renderer.setClearColor(clearColor);
 
         // handle window resizing.
         window.addEventListener("resize", () => {
-            this.state.renderer.setSize(window.innerWidth, window.innerHeight);
-            this.state.camera.aspect = window.innerWidth / window.innerHeight;
-            this.state.camera.updateProjectionMatrix();
+            this.renderer.setSize(window.innerWidth, window.innerHeight);
+            this.camera.aspect = window.innerWidth / window.innerHeight;
+            this.camera.updateProjectionMatrix();
         });
 
-        this.loop();  // start rendering
+        this.extensions = [];
+        this.ready = Promise.resolve(); // starts with a resolved promise.
+
+        this.updatables = []; // a bunch of functions that are called each frame with 'this' as a parameter.
     }
 
-    // Render the scene
+    /**
+     * Returns a valid App-extension given the callback and optional Promises.
+     * @param  {Function} callback A callback function which is called by App, with parameters (app, promise1, ..., promiseN).
+     * @param  {...Promise} promises The Promises you want resolved before doing the stuff in the callback (optional).
+     * @return {Promise} A valid extension Promise.
+     */
+    static extension(callback, ...promises) {
+        return new Promise((resolve, reject) => {
+            Promise.all(promises).then((promiseArgs) => {
+                resolve((app) => {
+                    callback(app, ...promiseArgs);
+                });
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+    }
+
+    /**
+     * Extends the application in an asynchronous manner by exposing 'this' as a parameter to the resolved callback-function.
+     * @param  {Promise OR Function} extension A Promise-object that resolves with a callback function, or a callback function directly.
+     */
+    extend(extension) {
+        this.extensions.push(Promise.resolve(extension));
+        this.ready = Promise.all(this.extensions); // update ready to include the extension.
+    }
+
+    set clearColor(color) {
+        this.renderer.setClearColor(clearColor);
+    }
+
+    /**
+     * Starts the update and rendering loop as soon as all extensions have finished loading.
+     * @return {Promise} A Promise, can be safely ignored, or used to start a task after the loop has started.
+     */
+    start() {
+        return this.ready.then((callbacks) => { // once all extensions have loaded:
+            callbacks.forEach((callback) => {
+                callback(this); // run callback function, with this object as a parameter.
+            });
+
+            this.loop(); // start loop.
+            
+        }).catch((error) => {
+            console.log('Unable to start. An error occurred in one of the extensions: ', error);
+        });
+    }
+
     loop() {
         // perform updates, animations etc.:
-        // here
+        for (let i = 0; i < this.updatables.length; i++) {
+            this.updatables[i](this); // TODO: pass in delta time.
+        }
 
         // Perform the render of the scene from our camera's point of view
-        this.state.renderer.render(this.state.scene, this.state.camera);
+        this.renderer.render(this.scene, this.camera);
 
         // this line loops the render call, remember to bind our context so we can access our stuff!
         window.requestAnimFrame(this.loop.bind(this));
