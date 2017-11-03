@@ -13,13 +13,13 @@ window.addEventListener('load', () => {
 	app.extend(Utilities.loadImage('resources/heightmap.png').then((image) => {
 		// return the callback function that will be called once the heightmap has been loaded.
 		return (app) => {
-			let size = 300;
+			let size = 1000;
 			app.terrain = new Terrain({
 				image,
 				size: size,
-				levelsOfDetail: 4,
+				levelsOfDetail: 5,
 				subdivisions: 16,
-				height: 60
+				height: 120
 			});
 
 			app.terrain.position.x = -size/2;

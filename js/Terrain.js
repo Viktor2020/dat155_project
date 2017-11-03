@@ -6,41 +6,33 @@ class Terrain extends THREE.Object3D {
 	 * Loads heightmap data from an image.
 	 * The image must be completely loaded before using this method.
 	 * @param  {Image} image Image to load.
-	 * @return {Array} An array of Uint8Arrays containing the heightmap data at different levels of detail.
+	 * @return {Array} A Uint8Array containing the heightmap data.
 	 */
-	static getHeightmap(image, subdivisions, levelsOfDetail) {
+	static getHeightmap(image, size) {
 		let canvas = document.createElement('canvas');
-		let targetSize = Math.pow(2, levelsOfDetail) * subdivisions;
 		
-	    canvas.width = targetSize;
-	    canvas.height = targetSize;
+		// assume texture is a square
+	    canvas.width = size;
+	    canvas.height = size;
 
 	    let context = canvas.getContext('2d');
 	    context.imageSmoothingEnabled = true;
 	    context.imageSmoothingQuality = "high";
 
-	    let data = [];
+	    let heightData = new Uint8Array(size * size);
 
-	    for (let i = 0; i <= levelsOfDetail; i++) {
+    	context.drawImage(image, 0, 0, size, size);
 
-	    	let size = Math.pow(2, i) * subdivisions;
+    	let imageData = context.getImageData(0, 0, size, size).data;
 
-	    	let heightData = new Uint8Array(size * size);
+	    imageData.forEach((a, i) => {
+	    	if (i % 4 === 0) { // only extract the first component of (r,g,b,a).
+	    		heightData[Math.floor(i / 4)] = a;
+	    	}
+	    });
 
-	    	context.drawImage(image, 0, 0, size, size);
 
-	    	let imageData = context.getImageData(0, 0, size, size).data;
-
-		    imageData.forEach((a, i) => {
-		    	if (i % 4 === 0) { // only extract the first component of (r,g,b,a).
-		    		heightData[Math.floor(i / 4)] = a;
-		    	}
-		    });
-
-		    data.push(heightData);
-	    }
-
-	    return data;
+	    return heightData;
 	}
 
 	/**
@@ -60,8 +52,9 @@ class Terrain extends THREE.Object3D {
     		size,
     	}, levelsOfDetail);
 
-    	// build geometry
-    	this.heightmap = this.constructor.getHeightmap(image, subdivisions, levelsOfDetail);
+    	// get heightmap data
+    	this.heightmapSize = (Math.pow(2, levelsOfDetail) * subdivisions) + 1;
+    	this.heightmap = this.constructor.getHeightmap(image, this.heightmapSize);
 
     	// build the terrain geometry from heightmap.
 		this.buildGeometry(this.tree);
@@ -69,49 +62,41 @@ class Terrain extends THREE.Object3D {
 
     buildGeometry(node, level = 0) {
 
-		let heightmap = this.heightmap[level];
-
-		let textureSize = Math.round(Math.sqrt(heightmap.length));
-
+    	// defines the area of the heightmap we want to extract data from.
+    	let factor = (this.heightmapSize - 1) / this.size;
 		let textureBounds = {
-			x: (node.bounds.x / this.size) * textureSize,
-			y: (node.bounds.z / this.size) * textureSize,
-			size: (node.bounds.size / this.size) * textureSize
+			x: Math.round(factor * node.bounds.x),
+			y: Math.round(factor * node.bounds.z),
+			size: Math.round(factor * node.bounds.size) + 1
 		};
 
-		let edgeOffsetX = 0;
-		let edgeOffsetZ = 0;
+		let step = textureBounds.size / (this.subdivisions);
 
-		if (node.bounds.x + node.bounds.size === this.size) {
-			edgeOffsetX = 1; // this is a edge node.
-		}
+		let geometry = new THREE.PlaneBufferGeometry(node.bounds.size, node.bounds.size, this.subdivisions, this.subdivisions);
 
-		if (node.bounds.z + node.bounds.size === this.size) {
-			edgeOffsetZ = 1;
-		}
 
-		let geometry = new THREE.PlaneBufferGeometry(node.bounds.size, node.bounds.size, this.subdivisions - edgeOffsetX, this.subdivisions - edgeOffsetZ);
-
-    	geometry.rotateX(-Math.PI / 2);
+	   	geometry.rotateX(-Math.PI / 2);
 
 		let vertices = geometry.attributes.position.array;
 
 		let i = 0;
-
-		for (let y = textureBounds.y; y < (textureBounds.y + textureBounds.size) + 1 - edgeOffsetZ; y++) {
-			for (let x = textureBounds.x; x < (textureBounds.x + textureBounds.size) + 1 - edgeOffsetX; x++) {
+		for (let y = textureBounds.y; y < (textureBounds.y + textureBounds.size); y += step) {
+			for (let x = textureBounds.x; x < (textureBounds.x + textureBounds.size); x += step) {
 				// set the Y-component to the corresponding height value.
-				vertices[i + 1] = (heightmap[y * textureSize + x] / 255) * this.height;
+				x = Math.round(x);
+				y = Math.round(y);
+				vertices[i + 1] = (this.heightmap[y * this.heightmapSize + x] / 255) * this.height;
 				i += 3;
 			}
 		}
+
+		// move origo to corner (instead of centre).
+		geometry.translate((node.bounds.size / 2), 0, (node.bounds.size / 2));
 
 		let material = new THREE.MeshBasicMaterial( {
 			color: 0x666666,
 			wireframe: true
 		});
-
-		geometry.translate((node.bounds.size / 2), 0, (node.bounds.size / 2));
 
 		node.mesh = new THREE.Mesh(geometry, material);
 
@@ -149,7 +134,9 @@ class Terrain extends THREE.Object3D {
     	});
 
     	nodes.forEach((node) => {
-    		node.mesh.visible = true;
+    		if (node.mesh) {
+    			node.mesh.visible = true;
+    		}
     	});
     }
 }
