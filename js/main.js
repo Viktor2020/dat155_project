@@ -13,13 +13,13 @@ window.addEventListener('load', () => {
 	app.extend(Utilities.loadImage('resources/heightmap.png').then((image) => {
 		// return the callback function that will be called once the heightmap has been loaded.
 		return (app) => {
-			let size = 1000;
+			let size = 300;
 			app.terrain = new Terrain({
 				image,
 				size: size,
 				levelsOfDetail: 4,
 				subdivisions: 16,
-				height: 200
+				height: 60
 			});
 
 			app.terrain.position.x = -size/2;
@@ -33,13 +33,15 @@ window.addEventListener('load', () => {
 		let controls = new CameraControls(app.camera, app.renderer.domElement);
 		app.scene.add(controls.object);
 		controls.object.position.z = 15;
-		controls.object.position.y = 150;
+		controls.object.position.y = 40;
+
+		controls.movementSpeed = 80;
 
 		app.updatables.push((delta) => {
 			controls.update(delta);
 
 			// update terrain lod.
-			app.terrain.update(controls.object.position, 100); // where 20, is the bounding square for lod.
+			app.terrain.update(controls.object.position, 75); // where 20, is the bounding square for lod.
 		});
 	});
 
