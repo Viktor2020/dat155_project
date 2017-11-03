@@ -17,8 +17,8 @@ window.addEventListener('load', () => {
 			app.terrain = new Terrain({
 				image,
 				size: size,
-				levelsOfDetail: 5,
-				subdivisions: 16,
+				levelsOfDetail: 3,
+				subdivisions: 32,
 				height: 120
 			});
 
@@ -32,7 +32,7 @@ window.addEventListener('load', () => {
 	app.extend((app) => {
 		let controls = new CameraControls(app.camera, app.renderer.domElement);
 		app.scene.add(controls.object);
-		controls.object.position.z = 15;
+		controls.object.position.z = 0;
 		controls.object.position.y = 40;
 
 		controls.movementSpeed = 80;
@@ -41,7 +41,7 @@ window.addEventListener('load', () => {
 			controls.update(delta);
 
 			// update terrain lod.
-			app.terrain.update(controls.object.position, 75); // where 20, is the bounding square for lod.
+			app.terrain.update(controls.object.position, 150); // where 20, is the bounding square for lod.
 		});
 	});
 

@@ -45,6 +45,7 @@ class Terrain extends THREE.Object3D {
     	this.subdivisions = subdivisions;
     	this.height = height;
     	this.size = size;
+    	this.heightmapImage = image;
 
     	this.tree = new Quadtree({
     		x: 0,
@@ -70,16 +71,20 @@ class Terrain extends THREE.Object3D {
 			size: Math.round(factor * node.bounds.size) + 1
 		};
 
-		let step = textureBounds.size / (this.subdivisions);
+		let step = textureBounds.size / this.subdivisions;
 
+		// when creating a plane with 16 subdivisions it will have 17^2 vertices.
 		let geometry = new THREE.PlaneBufferGeometry(node.bounds.size, node.bounds.size, this.subdivisions, this.subdivisions);
 
+		//console.log(geometry);
 
 	   	geometry.rotateX(-Math.PI / 2);
 
 		let vertices = geometry.attributes.position.array;
+		let uvs = geometry.attributes.uv.array;
 
 		let i = 0;
+		let f = 0;
 		for (let y = textureBounds.y; y < (textureBounds.y + textureBounds.size); y += step) {
 			for (let x = textureBounds.x; x < (textureBounds.x + textureBounds.size); x += step) {
 				// set the Y-component to the corresponding height value.
@@ -87,14 +92,22 @@ class Terrain extends THREE.Object3D {
 				y = Math.round(y);
 				vertices[i + 1] = (this.heightmap[y * this.heightmapSize + x] / 255) * this.height;
 				i += 3;
+
+				uvs[f] = (x / this.heightmapSize);
+				uvs[f + 1] = 1 - (y / this.heightmapSize);
+
+				f += 2;
 			}
 		}
 
 		// move origo to corner (instead of centre).
 		geometry.translate((node.bounds.size / 2), 0, (node.bounds.size / 2));
 
+
+
 		let material = new THREE.MeshBasicMaterial( {
-			color: 0x666666,
+			color: 0x555555,
+			map: new THREE.TextureLoader().load('resources/heightmap.png'),
 			wireframe: true
 		});
 
