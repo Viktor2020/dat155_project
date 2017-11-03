@@ -10,7 +10,7 @@ window.addEventListener('load', () => {
 	// }, Utilities.loadImage('resources/heightmap.png')));
 
 	// setup terrain.
-	app.extend(Utilities.loadImage('resources/heightmap.jpg').then((image) => {
+	app.extend(Utilities.loadImage('resources/heightmap.png').then((image) => {
 		// return the callback function that will be called once the heightmap has been loaded.
 		return (app) => {
 			let size = 1000;
