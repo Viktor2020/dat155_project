@@ -58,10 +58,10 @@ class Terrain extends THREE.Object3D {
     	this.heightmap = this.constructor.getHeightmap(image, this.heightmapSize);
 
     	// build the terrain geometry from heightmap.
-		this.buildGeometry(this.tree);
+		//this.buildGeometry(this.tree);
     }
 
-    buildGeometry(node, level = 0) {
+    buildGeometry(node) {
 
     	// defines the area of the heightmap we want to extract data from.
     	let factor = (this.heightmapSize - 1) / this.size;
@@ -103,8 +103,6 @@ class Terrain extends THREE.Object3D {
 		// move origo to corner (instead of centre).
 		geometry.translate((node.bounds.size / 2), 0, (node.bounds.size / 2));
 
-
-
 		let material = new THREE.MeshBasicMaterial( {
 			color: 0x555555,
 			map: new THREE.TextureLoader().load('resources/heightmap.png'),
@@ -117,16 +115,16 @@ class Terrain extends THREE.Object3D {
 		node.mesh.position.x = node.bounds.x;
 		node.mesh.position.z = node.bounds.z;
 
-		node.mesh.visible = false;
+		node.mesh.visible = true;
 
 		this.add(node.mesh);
 
-		// // do the same for all the children.
-		if (node.isLeaf === false) {
-	    	node.children.forEach((child) => {
-	    		this.buildGeometry(child, level + 1);
-	    	});
-		}
+		// do the same for all the children.
+		// if (node.isLeaf === false) {
+	 //    	node.children.forEach((child) => {
+	 //    		this.buildGeometry(child);
+	 //    	});
+		// }
     }
 
     /**
@@ -149,6 +147,8 @@ class Terrain extends THREE.Object3D {
     	nodes.forEach((node) => {
     		if (node.mesh) {
     			node.mesh.visible = true;
+    		} else {
+    			this.buildGeometry(node);
     		}
     	});
     }
