@@ -16,6 +16,8 @@ class Terrain extends THREE.Object3D {
 	    canvas.height = targetSize;
 
 	    let context = canvas.getContext('2d');
+	    context.imageSmoothingEnabled = true;
+	    context.imageSmoothingQuality = "high";
 
 	    let data = [];
 
@@ -44,7 +46,7 @@ class Terrain extends THREE.Object3D {
 	/**
 	 * Constructs a Terrain node.
 	 */
-    constructor({ image, size = 1000, levelsOfDetail = 3, subdivisions = 16, height = 50 }) {
+    constructor({ image, size = 100, levelsOfDetail = 2, subdivisions = 16, height = 20 }) {
     	super();
 
     	this.levelsOfDetail = levelsOfDetail;
@@ -54,22 +56,18 @@ class Terrain extends THREE.Object3D {
 
     	this.tree = new Quadtree({
     		x: 0,
-    		y: 0,
+    		z: 0,
     		size,
     	}, levelsOfDetail);
 
     	// build geometry
     	this.heightmap = this.constructor.getHeightmap(image, subdivisions, levelsOfDetail);
 
-    	// when the heightmap has loaded, build the terrain geometry from it.
+    	// build the terrain geometry from heightmap.
 		this.buildGeometry(this.tree);
     }
 
     buildGeometry(node, level = 0) {
-    	let geometry = new THREE.PlaneBufferGeometry(node.bounds.size, node.bounds.size, this.subdivisions);
-    	geometry.rotateX(-Math.PI / 2);
-
-		let vertices = geometry.attributes.position.array;
 
 		let heightmap = this.heightmap[level];
 
@@ -77,25 +75,49 @@ class Terrain extends THREE.Object3D {
 
 		let textureBounds = {
 			x: (node.bounds.x / this.size) * textureSize,
-			y: (node.bounds.y / this.size) * textureSize,
+			y: (node.bounds.z / this.size) * textureSize,
 			size: (node.bounds.size / this.size) * textureSize
 		};
 
+		let edgeOffsetX = 0;
+		let edgeOffsetZ = 0;
+
+		if (node.bounds.x + node.bounds.size === this.size) {
+			edgeOffsetX = 1; // this is a edge node.
+		}
+
+		if (node.bounds.z + node.bounds.size === this.size) {
+			edgeOffsetZ = 1;
+		}
+
+		let geometry = new THREE.PlaneBufferGeometry(node.bounds.size, node.bounds.size, this.subdivisions - edgeOffsetX, this.subdivisions - edgeOffsetZ);
+
+    	geometry.rotateX(-Math.PI / 2);
+
+		let vertices = geometry.attributes.position.array;
+
 		let i = 0;
-		for (let y = textureBounds.y; y < (textureBounds.y + textureBounds.size); y++) {
-			for (let x = textureBounds.x; x < (textureBounds.x + textureBounds.size); x++) {
+
+		for (let y = textureBounds.y; y < (textureBounds.y + textureBounds.size) + 1 - edgeOffsetZ; y++) {
+			for (let x = textureBounds.x; x < (textureBounds.x + textureBounds.size) + 1 - edgeOffsetX; x++) {
 				// set the Y-component to the corresponding height value.
 				vertices[i + 1] = (heightmap[y * textureSize + x] / 255) * this.height;
 				i += 3;
 			}
 		}
-		
-		let material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+
+		let material = new THREE.MeshBasicMaterial( {
+			color: 0x666666,
+			wireframe: true
+		});
+
+		geometry.translate((node.bounds.size / 2), 0, (node.bounds.size / 2));
+
 		node.mesh = new THREE.Mesh(geometry, material);
 
 		// position mesh according to quadtree.
 		node.mesh.position.x = node.bounds.x;
-		node.mesh.position.y = node.bounds.y;
+		node.mesh.position.z = node.bounds.z;
 
 		node.mesh.visible = false;
 
@@ -113,25 +135,21 @@ class Terrain extends THREE.Object3D {
      * Update terrain, with LOD based on given position.
      * @param  {{x, y}} position
      */
-    update(position, size = 50) {
+    update(position, size = 25) {
 
     	// clear visibility
     	this.children.forEach((child) => {
     		child.visible = false;
     	});
 
-    	// a square centered around the position.
-    	let lodSquare = {
-    		x: position.x - (size / 2),
-    		y: position.y - (size / 2),
+    	let nodes = this.tree.get({
+    		x: (position.x - (size / 2)) - this.position.x, // to account for the terrain node being moved.
+    		z: (position.z - (size / 2)) - this.position.z,
     		size
-    	};
+    	});
 
-    	let nodes = this.tree.get(lodSquare);
-    	console.log(nodes);
     	nodes.forEach((node) => {
     		node.mesh.visible = true;
-    		console.log(node);
     	});
     }
 }
@@ -156,33 +174,33 @@ class Quadtree {
 	split(numberOfLevels) {
 		let size = this.bounds.size / 2;
 		let x = this.bounds.x;
-		let y = this.bounds.y;
+		let z = this.bounds.z;
 
 		// bottom left
 		let q1 = new Quadtree({
 			x: x,
-			y: y,
+			z: z,
 			size
 		}, numberOfLevels - 1);
 
 		// bottom right
 		let q2 = new Quadtree({
 			x: x + size,
-			y: y,
+			z: z,
 			size
 		}, numberOfLevels - 1);
 
 		// top left
 		let q3 = new Quadtree({
 			x: x,
-			y: y + size,
+			z: z + size,
 			size
 		}, numberOfLevels - 1);
 
 		// top right
 		let q4 = new Quadtree({
 			x: x + size,
-			y: y + size,
+			z: z + size,
 			size
 		}, numberOfLevels - 1);
 
@@ -198,14 +216,14 @@ class Quadtree {
 		// to shorten it. (may be faster using it directly)
 		let nodeSquare = {
 			x: this.bounds.x,
-			y: this.bounds.y,
+			z: this.bounds.z,
 			size: this.bounds.size,
 		};
 
 		return (square.x < nodeSquare.x + nodeSquare.size &&
 			square.x + square.size > nodeSquare.x &&
-			square.y < nodeSquare.y + nodeSquare.size &&
-			square.y + square.size > nodeSquare.y);
+			square.z < nodeSquare.z + nodeSquare.size &&
+			square.z + square.size > nodeSquare.z);
 	}
 
 	/**
