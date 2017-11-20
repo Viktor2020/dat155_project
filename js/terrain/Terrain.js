@@ -5,7 +5,7 @@ class Terrain extends THREE.Object3D {
 	/**
 	 * Constructs a Terrain node.
 	 */
-    constructor({ image, width = 100, levelsOfDetail = 2, numberOfSubdivisions = 16, height = 20 }) {
+    constructor({ image, width = 100, levelsOfDetail = 4, numberOfSubdivisions = 16, height = 20 }) {
     	super();
 
     	this.levelsOfDetail = levelsOfDetail;

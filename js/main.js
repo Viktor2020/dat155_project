@@ -19,7 +19,7 @@ window.addEventListener('load', () => {
 				width,
 				height: 450,
 				levelsOfDetail: 5,
-				numberOfSubdivisions: 8
+				numberOfSubdivisions: 16
 			});
 
 			app.terrain.position.x = -width/2;
@@ -37,7 +37,7 @@ window.addEventListener('load', () => {
 		let controls = new CameraControls(app.camera, app.renderer.domElement);
 		app.scene.add(controls.object);
 		controls.object.position.z = 0;
-		controls.object.position.y = 1000;
+		controls.object.position.y = 350;
 
 		controls.movementSpeed = 120;
 
