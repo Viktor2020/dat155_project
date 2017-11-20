@@ -29,5 +29,35 @@ class Utilities {
 		});
 	}
 
-	
+	/**
+	 * Loads heightmap data from an image.
+	 * The image must be completely loaded before using this method.
+	 * @param  {Image} image Image to load.
+	 * @return {Array} A Uint8Array containing the heightmap data.
+	 */
+	static getHeightmapData(image, size) {
+		let canvas = document.createElement('canvas');
+		
+		// assume texture is a square
+	    canvas.width = size;
+	    canvas.height = size;
+
+	    let context = canvas.getContext('2d');
+	    context.imageSmoothingEnabled = true;
+	    context.imageSmoothingQuality = "high";
+
+	    let data = new Float32Array(size * size);
+
+    	context.drawImage(image, 0, 0, size, size);
+
+    	let imageData = context.getImageData(0, 0, size, size).data;
+
+	    imageData.forEach((a, i) => {
+	    	if (i % 4 === 0) { // only extract the first component of (r,g,b,a).
+	    		data[Math.floor(i / 4)] = a / 255;
+	    	}
+	    });
+
+	    return data;
+	}
 }

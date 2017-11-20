@@ -79,7 +79,8 @@ class App {
             this.loop(); // start loop.
 
         }).catch((error) => {
-            console.log('Unable to start. An error occurred in one of the extensions: ', error);
+            //console.log('Unable to start. An error occurred in one of the extensions: ', error);
+            throw error;
         });
     }
 
