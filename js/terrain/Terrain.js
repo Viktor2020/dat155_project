@@ -98,7 +98,7 @@ class Terrain extends THREE.Object3D {
     		let increment = Math.round(w / this.numberOfSubdivisions);
 
             // if all neighbours are on same level:
-            if (delta[0] === false && delta[1] === false && delta[2] === false && delta[3] === false) {
+            if (delta[0] === false && delta[1] === false && delta[2] === false && delta[3] === false) { // (we can add an or-clause to enable seams for demonstration purposes)
                 for (let j = y; j <= y + w; j += increment) {
                     for (let i = x; i <= x + w; i += increment) {
                         let a = (j * W) + i;
