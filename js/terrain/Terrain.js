@@ -32,6 +32,7 @@ class Terrain extends THREE.Object3D {
 
     	// get heightmap data
     	let heightmap = Utilities.getHeightmapData(image, this.totalNumberOfSubdivisions + 1);
+
     	let geometry = new THREE.PlaneBufferGeometry(this.width, this.width, this.totalNumberOfSubdivisions, this.totalNumberOfSubdivisions);
 
     	geometry.rotateX(-Math.PI / 2);
