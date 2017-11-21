@@ -52,18 +52,26 @@ class Terrain extends THREE.Object3D {
     	// set indexbuffer to dynamic.
     	geometry.index.setDynamic(true);
 
-    	let grass = new THREE.TextureLoader().load('resources/textures/grass01.jpg');
+    	let grass = new THREE.TextureLoader().load('resources/textures/grass_01.jpg');
     	grass.wrapS = THREE.RepeatWrapping;
 		grass.wrapT = THREE.RepeatWrapping;
-		grass.repeat.set(this.width/20, this.width/20);
+		grass.repeat.set(this.width/40, this.width/40);
 
-    	let material = new THREE.MeshLambertMaterial({
-			color: 0x777777,
-			map: grass,
-            //wireframe: true
-		});
+        let snowyRock = new THREE.TextureLoader().load('resources/textures/snowy_rock_01.png');
+        snowyRock.wrapS = THREE.RepeatWrapping;
+        snowyRock.wrapT = THREE.RepeatWrapping;
+        snowyRock.repeat.set(this.width/40, this.width/40);
 
-		this.mesh = new THREE.Mesh(geometry, material);
+        let splatMap1 = new THREE.TextureLoader().load('resources/textures/splatmap_01.png');
+
+        let mat = new TextureSplattingMaterial({
+            color: 0x777777,
+            shininess: 0,
+            textures: [snowyRock, grass],
+            splatMaps: [splatMap1]
+        });
+
+		this.mesh = new THREE.Mesh(geometry, mat);
 
 		this.add(this.mesh);
     }
@@ -255,7 +263,7 @@ class Terrain extends THREE.Object3D {
                         offset += 6;
                     }
 
-                    if (i !== x + maxed - increment) {
+                    if (j !== y + maxed - increment) {
                         this.mesh.geometry.index.array[offset + 0] = d;
                         this.mesh.geometry.index.array[offset + 1] = e;
                         this.mesh.geometry.index.array[offset + 2] = f;
@@ -297,14 +305,13 @@ class Terrain extends THREE.Object3D {
                         offset += 6;
                     }
 
-                    if (i !== x + maxed - increment) {
+                    if (j !== y + maxed - increment) {
                         this.mesh.geometry.index.array[offset + 0] = c;
                         this.mesh.geometry.index.array[offset + 1] = e;
                         this.mesh.geometry.index.array[offset + 2] = f;
                         offset += 3;
                     }
                 }
-
             }
     	}
 
