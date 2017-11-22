@@ -12,14 +12,23 @@ class CameraControls {
      *
      * @param camera a Threejs camera object
      * @param pointerTarget domElement. Pointer lock will be requested when this element is clicked.
+     * @param movementSpeed Defines how quickly the camera travels
+     * @param cameraspeed defines how quickly the camera will turn when mouse is moved
+
      */
-    constructor(camera, pointerTarget, movementSpeed = 25) {
-        this.controls = new THREE.PointerLockControls(camera);
-        this.object = this.controls.getObject();
+    constructor(camera, pointerTarget, movementSpeed = 25, cameraspeed = 0.002) {
+        this.enabled = false;
         this.movementSpeed = movementSpeed;
+        this.cameraspeed = cameraspeed;
 
         //the element will be used as a button to activate pointerLock
         this.pointerTarget = pointerTarget;
+
+        this.yaw = new THREE.Object3D();
+        this.pitch = new THREE.Object3D();
+
+        this.pitch.add(camera);
+        this.yaw.add(this.pitch);
 
         this.moveForward = false;
         this.moveBackward = false;
@@ -35,6 +44,13 @@ class CameraControls {
 
     }//end constructor
 
+    /**
+     * returns the cameras parent object3d elements, these objectcs determines camera pitch and yaw
+     */
+    get object() {
+        return this.yaw;
+    }
+
     //add event listeners for locking and unlocking the pointer
     /**
      * Make browser is compatible with pointerLocks, adds eventListeners.
@@ -43,6 +59,7 @@ class CameraControls {
         
         this.havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
         this.element = document.body;
+
 
         if (this.havePointerLock) {
 
@@ -53,6 +70,8 @@ class CameraControls {
             document.addEventListener( 'pointerlockerror', this.pointerlockerror.bind(this), false );
             document.addEventListener( 'mozpointerlockerror', this.pointerlockerror.bind(this), false );
             document.addEventListener( 'webkitpointerlockerror', this.pointerlockerror.bind(this), false );
+
+            document.addEventListener('mousemove', this.onMouseMove.bind(this), false);
 
             this.pointerTarget.addEventListener( 'click', this.lockPointer.bind(this) , false );
         }
@@ -83,9 +102,9 @@ class CameraControls {
      */
     pointerlockchange(event) {
         if (document.pointerLockElement === this.element || document.mozPointerLockElement === this.element || document.webkitPointerLockElement === this.element) {
-            this.controls.enabled = true;
+            this.enabled = true;
         } else {
-            this.controls.enabled = false;
+            this.enabled = false;
         }
     }
 
@@ -97,7 +116,7 @@ class CameraControls {
     update(delta) {
 
         //as long as pointer is not locked in, controls will not work
-        if(!this.controls.enabled) return;
+        if(!this.enabled) return;
 
         let x = 0;
         let y = 0;
@@ -186,4 +205,16 @@ class CameraControls {
         }
     }
 
+    /**
+     * Event handler for MouseMoved event, rotates camera around x and y axis based on mouse movement
+     * @param event
+     */
+    onMouseMove(event) {
+        if(!this.enabled) return;
+        let x = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+        let y = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+
+        this.pitch.rotation.x -= y*this.cameraspeed;
+        this.yaw.rotation.y -= x*this.cameraspeed;
+    }
 }
