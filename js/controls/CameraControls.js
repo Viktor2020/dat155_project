@@ -26,9 +26,13 @@ class CameraControls {
 
         this.yaw = new THREE.Object3D();
         this.pitch = new THREE.Object3D();
+        this.yawChange = 0;
+        this.pitchChange = 0;
+
 
         this.pitch.add(camera);
         this.yaw.add(this.pitch);
+
 
         this.moveForward = false;
         this.moveBackward = false;
@@ -121,6 +125,7 @@ class CameraControls {
         let x = 0;
         let y = 0;
         let z = 0;
+        let yaw = 0;
 
         //add velocity in a particular direction
         //multiply by delta to ensure same speed between frames
@@ -139,6 +144,16 @@ class CameraControls {
         this.object.translateY(y * delta);
         this.object.translateZ(z * delta);
 
+        //keep pitch between -90 and 90 degrees
+//        let pitch = this.clamp(this.pitch.rotation.x - this.pitchChange * delta,Math.PI/2,-Math.PI/2);
+
+        this.pitch.rotation.x += this.pitchChange*delta;
+        this.yaw.rotation.y += this.yawChange * delta;
+
+        this.pitch.rotation.x = this.clamp(this.pitch.rotation.x,-Math.PI/2,Math.PI/2);
+
+        this.pitchChange = 0;
+        this.yawChange = 0;
     }
 
     //stopper bevegelse når knappen slippes
@@ -201,7 +216,6 @@ class CameraControls {
                 break;
             case 67: // c
                 this.moveDown = true;
-                break;
         }
     }
 
@@ -214,7 +228,14 @@ class CameraControls {
         let x = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
         let y = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 
-        this.pitch.rotation.x -= y*this.cameraspeed;
-        this.yaw.rotation.y -= x*this.cameraspeed;
+        this.pitchChange -= y*this.cameraspeed;
+        this.yawChange -= x*this.cameraspeed;
+
+        //this.pitch.rotation.x -= y*this.cameraspeed;
+        //this.yaw.rotation.y -= x*this.cameraspeed;
+
+    }
+    clamp(num, min, max) {
+        return num <= min ? min : num >= max ? max : num;
     }
 }
