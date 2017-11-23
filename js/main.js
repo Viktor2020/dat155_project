@@ -48,39 +48,50 @@ window.addEventListener('load', () => {
 		};
 	}));
 
-    //TODO Load a list of objects!
-    let aName = 'lowpolytree';
-    let objectNames = [aName];
-    let path = 'resources/3Dmodels/';
-    //let deco = new Decorations({objectNames});
-    //let objects = deco.objectList;
-    //let objects = [];
-    let objects =  new THREE.Object3D();
-
-        console.log(objectNames[0]);
-    let name = objectNames[0];
-    console.log(name);
-    //Asynchronous loading
-    let mtlLoader = new THREE.MTLLoader();
-    mtlLoader.setPath(path);
-    //name++/++name
-    console.log(name.concat('/').concat(name.concat('.mtl')));
-    mtlLoader.load( name.concat('/').concat(name.concat('.mtl')), function (materials) {
-        materials.preload();
-        let objLoader = new THREE.OBJLoader();
-        objLoader.setMaterials(materials);
-        objLoader.setPath(path);
-        objLoader.load(name.concat('/').concat(name.concat('.obj')), function (obj) {
-            obj.name = name;
-            obj.position.set(0, 120, 0);
-            obj.scale.set(50, 50, 50);
-            objects.add(obj);
+    //Load a list of objects!
+    //{ geometryUrl: "object-url", materialUrl: "material-url"},
+    app.extend(Promise.all([// I'll load them later
+        {
+            geometryUrl: "resources/3Dmodels/lowpolytree/lowpolytree.obj",
+            materialUrl: "resources/3Dmodels/lowpolytree/lowpolytree.mtl",
+            parameters: {
+                upperPlacementBound: 300, // Tree line, upper
+                lowerPlacementBound: 60, //Tree line lower
+                minScale: 10,
+                maxScale: 70,
+                size: 1,// size*scale = minimum distance to next object
+                verticalDisplacement: 0 // vd*scale used to move the object down in to the ground.
+            }
+        },
+        /** {
+            geometryUrl: "resources/3Dmodels/rock1/rock1.obj",
+            materialUrl: "resources/3Dmodels/rock1/rock1.mtl",
+            parameters: {
+                upperPlacementBound: 1000,
+                lowerPlacementBound: 0,
+                minScale: 10,
+                maxScale: 70,
+                size: 1,// size*scale = minimum distance to next object
+                verticalDisplacement: 0 // vd*scale used to move the object down in to the ground.
+            }
+        }*/
+    ].map((source) => {
+        return Utilities.OBJLoader(source.geometryUrl, Utilities.MTLLoader(source.materialUrl)).then((object) => {
+            return {
+                object,
+                parameters: source.parameters
+            };
         });
-    });
+    })).then((objects) => { //When promises has resolved (models loaded)
 
-    app.scene.add(objects);
+        return (app) => {
+            //Parse that list to decorations class
+            let decorations = new Decorations(objects);
+            app.scene.add(decorations);
 
-    //Load object done
+            // maybe do something else..
+        }
+    }));//Load object done
 
 	// setup camera.
 	app.extend((app) => {
