@@ -1,4 +1,5 @@
 "use strict";
+//TODO DEPRECATED!
 
 /**
  * Class responsible for the static decorations on the terrain.
@@ -9,6 +10,7 @@ class Decorations extends THREE.Object3D {
     constructor({objects}) {
         super();
         //TODO: Unwrap objects: 3DModel, parameters
+
         //objects : 3DModel, parameters
         console.log(objects);
 
@@ -18,7 +20,19 @@ class Decorations extends THREE.Object3D {
 
 
     init(objects) {
-        //TODO placement of objects
-            //TODO: for each new instance object.clone
+        let witth = 3000;
+        let numberOfElements = 100;
+
+        for(let i = 0; i < objects.length; i++) {
+            //TODO placement of objects
+            for(let j = 0; j < numberOfElements; j++) {
+            let rx = Math.random() * witth - 0.5 * witth;
+            let ry = Math.random() * witth - 0.5 * witth;
+            let telem = TerrainElement(rx, ry, parameters.maxScale, parameters.maxScale);
+
+                //TODO: for each new instance object.clone
+
+            }
+        }
     }//END init
 }//END class

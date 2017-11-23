@@ -61,7 +61,8 @@ window.addEventListener('load', () => {
                 minScale: 10,
                 maxScale: 70,
                 size: 1,// size*scale = minimum distance to next object
-                verticalDisplacement: 0 // vd*scale used to move the object down in to the ground.
+                verticalDisplacement: 0, // vd*scale used to move the object down in to the ground.
+                numberOfObjects: 50
             }
         },
         {
@@ -73,7 +74,8 @@ window.addEventListener('load', () => {
                 minScale: 10,
                 maxScale: 70,
                 size: 1,// size*scale = minimum distance to next object
-                verticalDisplacement: 0 // vd*scale used to move the object down in to the ground.
+                verticalDisplacement: 0, // vd*scale used to move the object down in to the ground.
+                numberOfObjects: 50
             }
         }
     ].map((source) => {
@@ -87,7 +89,7 @@ window.addEventListener('load', () => {
         console.log(objects);
         return (app) => {
             //Parse that list to decorations class
-            let decorations = new Decorations(objects);
+            let decorations = new TerrainElements(objects);
             app.scene.add(decorations);
 
             // maybe do something else..
