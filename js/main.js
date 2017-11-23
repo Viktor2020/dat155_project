@@ -32,6 +32,39 @@ window.addEventListener('load', () => {
 		};
 	}));
 
+    //TODO Load a list of objects!
+    let aName = 'lowpolytree';
+    let objectNames = [aName];
+    let path = 'resources/3Dmodels/';
+    //let deco = new Decorations({objectNames});
+    //let objects = deco.objectList;
+    let objects = [];
+
+    console.log(objectNames[0]);
+    let name = objectNames[0];
+    console.log(name);
+    let mtlLoader = new THREE.MTLLoader();
+    mtlLoader.setPath(path);
+    //name++/++name
+    console.log(name.concat('/').concat(name.concat('.mtl')));
+    mtlLoader.load( name.concat('/').concat(name.concat('.mtl')), function (materials) {
+        materials.preload();
+        let objLoader = new THREE.OBJLoader();
+        objLoader.setMaterials(materials);
+        objLoader.setPath(path);
+        objLoader.load(name.concat('/').concat(name.concat('.obj')), function (obj) {
+            obj.name = name;
+            obj.position.set(0, 100, 0);
+            obj.scale.set(100, 100, 100);
+            //objects.push(obj);
+            app.scene.add(obj);
+        });
+    });
+
+    //app.scene.add(objects[0]);
+
+    //Load object done
+
 	// setup camera.
 	app.extend((app) => {
 		let controls = new CameraControls(app.camera, app.renderer.domElement);
