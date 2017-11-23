@@ -6,7 +6,7 @@ class App {
         this.clock = new THREE.Clock();
 
         // CAMERA
-        this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 3000);
+        this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 30000);
 
         // RENDERER
         this.renderer = new THREE.WebGLRenderer({
@@ -14,6 +14,8 @@ class App {
         });
 
         this.renderer.setPixelRatio( window.devicePixelRatio );
+
+        this.scene.fog = new THREE.FogExp2(0xffffff,0.0007);
 
         // add canvas to DOM.
         let canvas = this.renderer.domElement;

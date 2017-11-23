@@ -171,29 +171,29 @@ window.addEventListener('load', () => {
         });
 	});
 
-	//add a circling plane
+    //add a circling plane
     app.extend((app) => {
 
-    let materialLoader = new THREE.MTLLoader();
+        let materialLoader = new THREE.MTLLoader();
 
-    materialLoader.load('resources/3Dmodels/Plane/plane222.mtl', function(mat) {
-        mat.preload();
-        let objectLoader = new THREE.OBJLoader();
+        materialLoader.load('resources/3Dmodels/Plane/plane222.mtl', function(mat) {
+            mat.preload();
+            let objectLoader = new THREE.OBJLoader();
 
-        objectLoader.setMaterials(mat);
-        objectLoader.load('resources/3Dmodels/Plane/plane222.obj', function (obj) {
+            objectLoader.setMaterials(mat);
+            objectLoader.load('resources/3Dmodels/Plane/plane222.obj', function (obj) {
 
-            obj.scale.set(0.8, 0.8, 0.8);
+                obj.scale.set(0.8, 0.8, 0.8);
 
-            let plane = new Plane(obj,15);
+                let plane = new Plane(obj,15);
 
-            app.updatables.push((delta) => {
-                plane.update(delta);
+                app.updatables.push((delta) => {
+                    plane.update(delta);
+                });
+
+                app.scene.add(obj);
             });
-
-            app.scene.add(obj);
         });
-    });
     });
 		
 	app.start();
