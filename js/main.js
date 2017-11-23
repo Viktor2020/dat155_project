@@ -63,7 +63,7 @@ window.addEventListener('load', () => {
                 verticalDisplacement: 0 // vd*scale used to move the object down in to the ground.
             }
         },
-        /** {
+        {
             geometryUrl: "resources/3Dmodels/rock1/rock1.obj",
             materialUrl: "resources/3Dmodels/rock1/rock1.mtl",
             parameters: {
@@ -74,7 +74,7 @@ window.addEventListener('load', () => {
                 size: 1,// size*scale = minimum distance to next object
                 verticalDisplacement: 0 // vd*scale used to move the object down in to the ground.
             }
-        }*/
+        }
     ].map((source) => {
         return Utilities.OBJLoader(source.geometryUrl, Utilities.MTLLoader(source.materialUrl)).then((object) => {
             return {
