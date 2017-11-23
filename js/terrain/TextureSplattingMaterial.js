@@ -76,8 +76,6 @@ class TextureSplattingMaterial extends THREE.ShaderMaterial {
             defines.USE_SPLATMAP = '';
         }
 
-        //console.log(uniforms);
-
         let shaders = TextureSplattingMaterial.getShaders({
             length: (textures !== null) ? textures.length : 0
         });
@@ -90,10 +88,6 @@ class TextureSplattingMaterial extends THREE.ShaderMaterial {
             fog: true,
             lights: true
         });
-
-        console.log(textures);
-
-        //console.log(THREE.ShaderChunk.meshphong_frag);
 	}
 
     static getShaders({ length }) {

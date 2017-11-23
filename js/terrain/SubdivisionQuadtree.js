@@ -1,6 +1,6 @@
 "use strict";
 
-class TerrainQuadtree {
+class SubdivisionQuadtree {
 
 	/**
 	 * Checks for intersection.
@@ -117,41 +117,6 @@ class TerrainQuadtree {
 	static constrain(tree) {
 		while (this._constrain(tree));
 	}
-
-	// static constrain(tree) {
-	// 	while (true) {
-	// 		let nodes = tree.getLeafNodes();
-	// 		let splitted = false;
-
-	// 		for (let i = 0; i < nodes.length; i++) {
-	// 			let node = nodes[i];
-	// 			let neighbours = node.findNeighbours();
-				
-	// 			for (let i = 0; i < 4; i++) {
-	// 				if (neighbours[i] !== null && node.level - neighbours[i].level > 1) {
-
-	// 					// the neighbour and the node differ by more than one level, we need to split it.
-						
-	// 					// TODO: we can make this slightly more efficient by splitting it several times depending on the difference.
-	// 					// This is slightly tricky because we dont want to split it uniformly,
-	// 					// but instead in a way that just fulfills the constraint.
-						
-	// 					neighbours[i].split();
-	// 					splitted = true;
-	// 				}
-	// 			}
-
-	// 			if (splitted) {
-	// 				break; // break out to the while loop, restarting the process.
-	// 			}
-	// 		}
-
-	// 		// if we got through the whole for loop without splitting, we're done.
-	// 		if (splitted === false) {
-	// 			break;
-	// 		}
-	// 	}
-	// }
 
 	constructor(bounds, levelsOfDetail) {
 		this.tree = new Quadtree(bounds); // root node.

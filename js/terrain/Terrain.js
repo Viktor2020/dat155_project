@@ -15,7 +15,7 @@ class Terrain extends THREE.Object3D {
     	this.height = height;
     	this.width = width;
 
-    	this.terrainQuadtree = new TerrainQuadtree({ x: 0, y: 0, width: this.width }, this.levelsOfDetail);
+    	this.terrainQuadtree = new SubdivisionQuadtree({ x: 0, y: 0, width: this.width }, this.levelsOfDetail);
 
     	// initialize the terrain mesh:
     	this.init(image);
