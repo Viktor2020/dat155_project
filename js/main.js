@@ -49,8 +49,7 @@ window.addEventListener('load', () => {
 	}));
 
     //Load a list of objects!
-    //{ geometryUrl: "object-url", materialUrl: "material-url"}
-
+    //{ geometryUrl: "object-url", materialUrl: "material-url"},
     app.extend(Promise.all([// I'll load them later
         {
             geometryUrl: "resources/3Dmodels/lowpolytree/lowpolytree.obj",
@@ -78,13 +77,13 @@ window.addEventListener('load', () => {
         }
     ].map((source) => {
         return Utilities.OBJLoader(source.geometryUrl, Utilities.MTLLoader(source.materialUrl)).then((object) => {
-            return Promise.resolve({
+            return {
                 object,
                 parameters: source.parameters
-            });
+            };
         });
     })).then((objects) => { //When promises has resolved (models loaded)
-        console.log(objects);
+
         return (app) => {
             //Parse that list to decorations class
             let decorations = new Decorations(objects);

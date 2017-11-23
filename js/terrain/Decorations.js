@@ -7,18 +7,15 @@
 class Decorations extends THREE.Object3D {
 
     constructor({objects}) {
-        super();
-        //TODO: Unwrap objects: 3DModel, parameters
         //objects : 3DModel, parameters
-        console.log(objects);
+        super();
 
         //this.objectList = this.init(objects);
 
     }//END constructor
 
-
+    //Loads objects and stores them in a object list
     init(objects) {
-        //TODO placement of objects
-            //TODO: for each new instance object.clone
+
     }//END init
 }//END class
