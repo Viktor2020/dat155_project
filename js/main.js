@@ -3,27 +3,43 @@
 window.addEventListener('load', () => {
 	let app = new App();
 
-	// Exempel på bruk av extension hjelpemetode.
-	// app.extend(App.extension((app, image) => {
-	// 	app.terrain = new Terrain({ image });
-	// 	app.scene.add(app.terrain);
-	// }, Utilities.loadImage('resources/heightmap.png')));
-
 	// setup terrain.
-	app.extend(Utilities.loadImage('resources/textures/heightmap.png').then((image) => {
+	app.extend(Utilities.loadImage('resources/textures/heightmap.png').then((heightmapImage) => {
 		// return the callback function that will be called once the heightmap has been loaded.
 		return (app) => {
 			let width = 3000;
-			app.terrain = new Terrain({
-				image,
+
+			let geometry = new TerrainBufferGeometry({
+				heightmapImage,
 				width,
 				height: 450,
 				levelsOfDetail: 5,
 				numberOfSubdivisions: 16
 			});
 
+			let grass = new THREE.TextureLoader().load('resources/textures/grass_01.jpg');
+	    	grass.wrapS = THREE.RepeatWrapping;
+			grass.wrapT = THREE.RepeatWrapping;
+			grass.repeat.set(width/40, width/40);
+
+	        let snowyRock = new THREE.TextureLoader().load('resources/textures/snowy_rock_01.png');
+	        snowyRock.wrapS = THREE.RepeatWrapping;
+	        snowyRock.wrapT = THREE.RepeatWrapping;
+	        snowyRock.repeat.set(width/80, width/80);
+
+        	let splatMap1 = new THREE.TextureLoader().load('resources/textures/splatmap_01.png');
+
+	        let material = new TextureSplattingMaterial({
+	            color: 0x777777,
+	            shininess: 0,
+	            textures: [snowyRock, grass],
+	            splatMaps: [splatMap1]
+	        });
+
+			app.terrain = new THREE.Mesh(geometry, material);
 			app.terrain.position.x = -width/2;
 			app.terrain.position.z = -width/2;
+
 			app.scene.add(app.terrain);
 
 			let light = new THREE.DirectionalLight( 0xffffff, 2);
@@ -79,7 +95,7 @@ window.addEventListener('load', () => {
 			controls.update(delta);
 
 			// update terrain lod.
-			app.terrain.update(controls.object.position.x, controls.object.position.z, 80);
+			app.terrain.geometry.update(controls.object.position.x - app.terrain.position.x, controls.object.position.z - app.terrain.position.z, 80);
 		});
 	});
 	

@@ -1,17 +1,17 @@
 "use strict";
 
 class TextureSplattingMaterial extends THREE.ShaderMaterial {
-	constructor({
-		color = 0xffffff,
+    constructor({
+        color = 0xffffff,
         emissive = 0x000000,
         specular = 0x111111,
         shininess = 30,
         textures = null,
         splatMaps = null,
         map = null
-	}) {
+    }) {
 
-		let uniforms = THREE.UniformsUtils.merge([
+        let uniforms = THREE.UniformsUtils.merge([
             THREE.UniformsLib.common,
             THREE.UniformsLib.specularmap,
             THREE.UniformsLib.envmap,
@@ -42,7 +42,7 @@ class TextureSplattingMaterial extends THREE.ShaderMaterial {
 
             defines.USE_MAP = '';
         }
-
+        
         if (textures !== null && splatMaps !== null) {
 
             uniforms.textures = {
@@ -88,7 +88,7 @@ class TextureSplattingMaterial extends THREE.ShaderMaterial {
             fog: true,
             lights: true
         });
-	}
+    }
 
     static getShaders({ length }) {
 

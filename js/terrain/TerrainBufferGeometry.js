@@ -4,17 +4,23 @@ class TerrainBufferGeometry extends THREE.PlaneBufferGeometry {
 
     constructor({ heightmapImage, width = 100, levelsOfDetail = 4, numberOfSubdivisions = 16, height = 20 }) {
 
-        this.levelsOfDetail = levelsOfDetail;
-        this.numberOfSubdivisions = numberOfSubdivisions;
-        this.totalNumberOfSubdivisions = Math.pow(2, this.levelsOfDetail) * this.numberOfSubdivisions;
-
-        this.height = height;
+        let totalNumberOfSubdivisions = Math.pow(2, levelsOfDetail) * numberOfSubdivisions;
 
         // instantiate 
-    	super(width, width, this.totalNumberOfSubdivisions, this.totalNumberOfSubdivisions);
+    	super(width, width, totalNumberOfSubdivisions, totalNumberOfSubdivisions);
+
+        //this.type = "TerrainBufferGeometry";
+
         this.rotateX(-Math.PI / 2);
 
-    	this.quadtree = new TerrainQuadtree({ x: 0, y: 0, width: this.width }, this.levelsOfDetail);
+        this.levelsOfDetail = levelsOfDetail;
+        this.numberOfSubdivisions = numberOfSubdivisions;
+        this.totalNumberOfSubdivisions = totalNumberOfSubdivisions;
+
+        this.width = width;
+        this.height = height;
+
+    	this.quadtree = new SubdivisionQuadtree({ x: 0, y: 0, width: this.width }, this.levelsOfDetail);
 
     	// initialize the terrain mesh:
     	this.init(heightmapImage);
@@ -306,7 +312,7 @@ class TerrainBufferGeometry extends THREE.PlaneBufferGeometry {
     		return;
     	}
     	
-    	this.quadtree.update({ x: x - this.position.x, y: z - this.position.z, radius });
+    	this.quadtree.update({ x: x, y: z, radius });
     	let nodes = this.quadtree.tree.getLeafNodes();
 
     	this.rebuild(nodes);
