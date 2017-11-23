@@ -14,12 +14,9 @@ class TerrainElement {
     intersects(element) {
         let xdist = Math.abs(this.x - element.x);
         let zdist = Math.abs(this.z - element.z);
-        if(xdist < (this.width + element.width) || zdist < (this.depth + element.depth)) {
-            return true;
-        } else {
-            return false;
-        }//end if
-    }//end intersects
+        return (xdist < (this.width + element.width) || zdist < (this.depth + element.depth));
+
+    //end intersects
 
     intersectsAny(elements) {
         if(elements.length < 1) return false;
