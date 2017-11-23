@@ -38,11 +38,13 @@ window.addEventListener('load', () => {
     let path = 'resources/3Dmodels/';
     //let deco = new Decorations({objectNames});
     //let objects = deco.objectList;
-    let objects = [];
+    //let objects = [];
+    let objects =  new THREE.Object3D();
 
-    console.log(objectNames[0]);
+        console.log(objectNames[0]);
     let name = objectNames[0];
     console.log(name);
+    //Asynchronous loading
     let mtlLoader = new THREE.MTLLoader();
     mtlLoader.setPath(path);
     //name++/++name
@@ -54,14 +56,13 @@ window.addEventListener('load', () => {
         objLoader.setPath(path);
         objLoader.load(name.concat('/').concat(name.concat('.obj')), function (obj) {
             obj.name = name;
-            obj.position.set(0, 100, 0);
-            obj.scale.set(100, 100, 100);
-            //objects.push(obj);
-            app.scene.add(obj);
+            obj.position.set(0, 120, 0);
+            obj.scale.set(50, 50, 50);
+            objects.add(obj);
         });
     });
 
-    //app.scene.add(objects[0]);
+    app.scene.add(objects);
 
     //Load object done
 
