@@ -69,7 +69,6 @@ class Utilities {
 			let loader = new THREE.MTLLoader();
 			loader.load(url, (materials) => {
 				materials.preload();
-				console.log(materials);
 				resolve(materials);
 			}, null, (error) => {
 				reject(error);
@@ -89,14 +88,10 @@ class Utilities {
 				loader.setMaterials(materials);
 			}
 
-			console.log(url, materials);
-
 			// load a resource
 			loader.load(url, (object) => {
-				console.log(object)
 				return Promise.resolve(object);
 			}, null, (error) => {
-				console.log(error);
 				return Promise.reject(error);
 			});
 		});
