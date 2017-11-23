@@ -49,7 +49,8 @@ window.addEventListener('load', () => {
 	}));
 
     //Load a list of objects!
-    //{ geometryUrl: "object-url", materialUrl: "material-url"},
+    //{ geometryUrl: "object-url", materialUrl: "material-url"}
+
     app.extend(Promise.all([// I'll load them later
         {
             geometryUrl: "resources/3Dmodels/lowpolytree/lowpolytree.obj",
@@ -77,13 +78,13 @@ window.addEventListener('load', () => {
         }
     ].map((source) => {
         return Utilities.OBJLoader(source.geometryUrl, Utilities.MTLLoader(source.materialUrl)).then((object) => {
-            return {
+            return Promise.resolve({
                 object,
                 parameters: source.parameters
-            };
+            });
         });
     })).then((objects) => { //When promises has resolved (models loaded)
-
+        console.log(objects);
         return (app) => {
             //Parse that list to decorations class
             let decorations = new Decorations(objects);
@@ -171,29 +172,29 @@ window.addEventListener('load', () => {
         });
 	});
 
-	//add a circling plane
+    //add a circling plane
     app.extend((app) => {
 
-    let materialLoader = new THREE.MTLLoader();
+        let materialLoader = new THREE.MTLLoader();
 
-    materialLoader.load('resources/3Dmodels/Plane/plane222.mtl', function(mat) {
-        mat.preload();
-        let objectLoader = new THREE.OBJLoader();
+        materialLoader.load('resources/3Dmodels/Plane/plane222.mtl', function(mat) {
+            mat.preload();
+            let objectLoader = new THREE.OBJLoader();
 
-        objectLoader.setMaterials(mat);
-        objectLoader.load('resources/3Dmodels/Plane/plane222.obj', function (obj) {
+            objectLoader.setMaterials(mat);
+            objectLoader.load('resources/3Dmodels/Plane/plane222.obj', function (obj) {
 
-            obj.scale.set(0.8, 0.8, 0.8);
+                obj.scale.set(0.8, 0.8, 0.8);
 
-            let plane = new Plane(obj,15);
+                let plane = new Plane(obj,15);
 
-            app.updatables.push((delta) => {
-                plane.update(delta);
+                app.updatables.push((delta) => {
+                    plane.update(delta);
+                });
+
+                app.scene.add(obj);
             });
-
-            app.scene.add(obj);
         });
-    });
     });
 		
 	app.start();

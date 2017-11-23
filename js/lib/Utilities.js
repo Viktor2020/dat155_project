@@ -67,8 +67,13 @@ class Utilities {
 	static MTLLoader(url) {
 		return new Promise((resolve, reject) => {
 			let loader = new THREE.MTLLoader();
-			loader.load(url, (mat) => {
-				resolve(mat);
+
+			loader.load(url, (materials) => {
+				materials.preload();
+				console.log(materials);
+				resolve(materials);
+			}, null, (error) => {
+				reject(error);
 			});
 		});
 	}
@@ -89,9 +94,9 @@ class Utilities {
 
 				// load a resource
 				loader.load(url, (object) => {
-					return resolve(object);
+					resolve(object);
 				}, null, (error) => {
-					return reject(error);
+					reject(error);
 				});
 			});
 		});
