@@ -4,7 +4,7 @@ window.addEventListener('load', () => {
 	let app = new App();
 
 	// setup terrain.
-	app.extend(Utilities.loadImage('resources/textures/heightmap.png').then((heightmapImage) => {
+	app.extend(Utilities.loadImage('resources/textures/heightmap_2.png').then((heightmapImage) => {
 		// return the callback function that will be called once the heightmap has been loaded.
 		return (app) => {
 			let width = 3000;
