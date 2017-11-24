@@ -155,40 +155,17 @@ window.addEventListener('load', () => {
 
 //controls.movementSpeed = 250;
 
-		let geometry = new THREE.CubeGeometry( 3500, 3500,3500);
-
-		let cubeMaterials =
-				[
-						new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader( ).load( "resources/img/skybox/desertsky_ft.png" ), side: THREE.DoubleSide}),
-						new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader( ).load( "resources/img/skybox/desertsky_bk.png" ), side: THREE.DoubleSide}),
-						new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader( ).load( "resources/img/skybox/desertsky_up.png" ), side: THREE.DoubleSide}),
-						new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader( ).load( "resources/img/skybox/desertsky_dn.png" ), side: THREE.DoubleSide}),
-						new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader( ).load( "resources/img/skybox/desertsky_rt.png" ), side: THREE.DoubleSide}),
-						new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader( ).load( "resources/img/skybox/desertsky_lf.png" ), side: THREE.DoubleSide})
-				];
-
-		let cubeMap = new THREE.CubeTextureLoader().setPath("resources/img/skybox/").load([
-				"desertsky_ft.png",
-				"desertsky_bk.png",
-				"desertsky_up.png",
-				"desertsky_dn.png",
-				"desertsky_rt.png",
-				"desertsky_lf.png"
-		]);
-
 		let pm = new THREE.MeshBasicMaterial({color:0xff0000});
 		let pg = new THREE.CubeGeometry(20,20,20,20);
 		let player = new THREE.Mesh(pg,pm);
 
-		let cube = new THREE.Mesh( geometry, cubeMaterials );
-		app.scene.add(cube);
 		app.scene.add(player);
+        this.controls = controls;
 
-		app.updatables.push((delta) => {
+        app.updatables.push((delta) => {
 			controls.update(delta);
 
 			//app.terrain.update(controls.object.position.x, controls.object.position.z, 80);
-			cube.position.copy(controls.object.position);
 			player.position.copy(controls.object.position);
 
 			// update terrain lod.
@@ -228,7 +205,7 @@ window.addEventListener('load', () => {
 
     app.extend((app) => {
         //Inner skydome is used to get a mre natural fog effect while still makeing the skydome visible thru the fog
-    let geometry = new THREE.SphereGeometry(2000, 60, 60);
+    let geometry = new THREE.SphereGeometry(3000, 60, 60);
     let material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, opacity: 0.7,transparent:true, fog: true});
 
     this.innerSkyDome = new THREE.Mesh(geometry, material);
@@ -246,6 +223,10 @@ window.addEventListener('load', () => {
     this.outerSkyDome.eulerOrder = 'XZY';
     this.outerSkyDome.renderDepth = 1000.0;
     app.scene.add(this.outerSkyDome);
+        app.updatables.push((delta) => {
+            this.innerSkyDome.position.copy(this.controls.object.position);
+            this.outerSkyDome.position.copy(this.controls.object.position);
+        });
     });
 
 
