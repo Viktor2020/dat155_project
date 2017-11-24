@@ -311,8 +311,6 @@ class TerrainBufferGeometry extends THREE.PlaneBufferGeometry {
     	if (x === this._cache.x && z === this._cache.z && radius === this._cache.radius) {
     		return;
     	}
-
-        console.log(x, z);
     	
     	this.quadtree.update({ x: x, y: z, radius });
     	let nodes = this.quadtree.tree.getLeafNodes();
