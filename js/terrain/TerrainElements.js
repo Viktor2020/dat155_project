@@ -11,23 +11,16 @@ class TerrainElements {
 
     }
 
-    placeElement(x,z,widthScale,depthScale,heightScale,maxh,minh,obj) {
+    placeElement(x,z,size, widthScale,depthScale,heightScale,maxh,minh,obj) {
     //placeElement(x,z,widthScale,depthScale,obj) {
-        let bbox = new THREE.Box3().setFromObject(obj);
-        let width = Math.abs(bbox.min.x - bbox.max.x);
-        let depth = Math.abs(bbox.min.z - bbox.max.z);
-        let height = Math.abs(bbox.min.y - bbox.max.y);
-        console.log("treeHeight "+height);
-
-        obj.position.set(x,0,z);
-        obj.scale.set(widthScale,heightScale,depthScale);
-
-        let pos = this.app.terrain.worldToLocal(obj.position.clone());
-
         let y = 0;
 
-        y = this.app.terrain.geometry.getHeightAt(pos)+ ((height*heightScale)*0.25);
-        let element = new TerrainElement(x,z,widthScale*width,depthScale*depth);
+        //Generate terain height pos
+        obj.position.set(x,y,z);
+        let pos = this.app.terrain.worldToLocal(obj.position.clone());
+
+        y = this.app.terrain.geometry.getHeightAt(pos)+ ((size*heightScale));
+        let element = new TerrainElement(x,z,widthScale*size,depthScale*size);
 
         if(element.intersectsAny(this.elements)) {
             console.log("intersects");
@@ -39,6 +32,8 @@ class TerrainElements {
         }
 
         obj.position.set(x,y,z);
+        obj.scale.set(widthScale,heightScale,depthScale);
+
         this.nodelist.push(obj)
         this.elements.push(element);
         return true;
@@ -54,9 +49,9 @@ class TerrainElements {
                 let newobj = obj.obj.clone();
                 let x = Math.random()*(this.app.terrain.geometry.width - 300) + 150;
                 let z = Math.random()*(this.app.terrain.geometry.width - 300) + 150;
-                let size = (Math.random() * (obj.parameters.maxScale - obj.parameters.minScale)) + obj.parameters.minScale;
+                let scale = (Math.random() * (obj.parameters.maxScale - obj.parameters.minScale)) + obj.parameters.minScale;
                 //let size = 2;
-                let success = this.placeElement(x,z, size, size,size ,obj.parameters.upperPlacementBound,obj.parameters.lowerPlacementBound, newobj);
+                let success = this.placeElement(x,z,obj.parameters.size ,scale, scale,scale ,obj.parameters.upperPlacementBound,obj.parameters.lowerPlacementBound, newobj);
                  if(!success) {
                     j-= 1;
                     err ++;
