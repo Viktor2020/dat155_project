@@ -2,9 +2,10 @@
 
 class TerrainElements {
     //TODO Cleanup
-    constructor(objects) {
+    constructor(objects,app) {
         this.elements = [];
         this.nodelist = [];
+        this.app = app;
 
         this.initTerrainElements(objects);
 
@@ -12,7 +13,8 @@ class TerrainElements {
 
     placeElement(x,z,w,d,h,maxh,minh,obj) {
     //placeElement(x,z,w,d,obj) {
-        let y = 300;
+        obj.position.set(x,0,z);
+        let y = this.app.terrain.geometry.getHeightAt(obj.position);
         let element = new TerrainElement(x,z,w,d);
 
         //TODO ERROR Here!!
@@ -40,7 +42,8 @@ class TerrainElements {
                 let newobj = obj.obj.clone();
                 let x = Math.random()*3000 - 1500;
                 let y = Math.random()*3000 - 1500;
-                let size = (Math.random() * (obj.parameters.maxScale - obj.parameters.minScale)) + obj.parameters.minScale;
+                //let size = (Math.random() * (obj.parameters.maxScale - obj.parameters.minScale)) + obj.parameters.minScale;
+                let size = 10;
                 //alert(typeof obj.parameters.minScale === "undefined");
                 let success = this.placeElement(x,y, size, size,size ,obj.parameters.upperPlacementBound,obj.parameters.lowerPlacementBound, newobj);
                  if(!success) {

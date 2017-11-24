@@ -90,7 +90,7 @@ window.addEventListener('load', () => {
 
         return (app) => {
             //Parse that list to decorations class
-            let decorations = new TerrainElements(objects);
+            let decorations = new TerrainElements(objects,app);
             for(let i = 0; i < decorations.nodelist.length;i++) {
                 app.scene.add(decorations.nodelist[i]);
             }
