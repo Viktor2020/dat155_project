@@ -37,8 +37,8 @@ window.addEventListener('load', () => {
 	        });
 
 			app.terrain = new THREE.Mesh(geometry, material);
-			app.terrain.position.x = -width/2;
-			app.terrain.position.z = -width/2;
+			//app.terrain.position.x = -width/2;
+			//app.terrain.position.z = -width/2;
 
 			app.scene.add(app.terrain);
 
@@ -56,12 +56,13 @@ window.addEventListener('load', () => {
             materialUrl: "resources/models/lowpolytree2/lowpolytree2.mtl",
             parameters: {
                 upperPlacementBound: 300, // Tree line, upper
-                lowerPlacementBound: 60, //Tree line lower
+                lowerPlacementBound: 100, //Tree line lower
                 minScale: 0.1,
                 maxScale: 1,
                 size: 1,// size*scale = minimum distance to next object
                 verticalDisplacement: 0, // vd*scale used to move the object down in to the ground.
-                numberOfObjects: 5
+                numberOfObjects: 5,
+				type:0
             }
         },
         {
@@ -87,7 +88,8 @@ window.addEventListener('load', () => {
                 maxScale: 3,
                 size: 1,// size*scale = minimum distance to next object
                 verticalDisplacement: 0, // vd*scale used to move the object down in to the ground.
-                numberOfObjects: 5
+                numberOfObjects: 5,
+				type:1
             }
         },
         {
@@ -115,7 +117,7 @@ window.addEventListener('load', () => {
 
         return (app) => {
             //Parse that list to decorations class
-            let decorations = new TerrainElements(objects);
+            let decorations = new TerrainElements(objects,app);
             for(let i = 0; i < decorations.nodelist.length;i++) {
                 app.scene.add(decorations.nodelist[i]);
             }
