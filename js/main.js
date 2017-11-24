@@ -58,7 +58,7 @@ window.addEventListener('load', () => {
             parameters: {
                 upperPlacementBound: 300, // Tree line, upper
                 lowerPlacementBound: 60, //Tree line lower
-                minScale: 0.3,
+                minScale: 0.1,
                 maxScale: 1,
                 size: 1,// size*scale = minimum distance to next object
                 verticalDisplacement: 0, // vd*scale used to move the object down in to the ground.
@@ -72,7 +72,7 @@ window.addEventListener('load', () => {
                 upperPlacementBound: 1000,
                 lowerPlacementBound: 0,
                 minScale: 0.3,
-                maxScale: 1,
+                maxScale: 3,
                 size: 1,// size*scale = minimum distance to next object
                 verticalDisplacement: 0, // vd*scale used to move the object down in to the ground.
                 numberOfObjects: 5
