@@ -42,7 +42,7 @@ window.addEventListener('load', () => {
 
 			app.scene.add(app.terrain);
 
-			let light = new THREE.DirectionalLight( 0xffffff, 2);
+			let light = new THREE.DirectionalLight(0xffffff, 2);
 			light.position.set(0.01, 1, 0);
 			app.scene.add(light); // for testing purposes.
 		};
@@ -53,8 +53,13 @@ window.addEventListener('load', () => {
     //{ geometryUrl: "object-url", materialUrl: "material-url"}
     app.extend(Promise.all([// I'll load them later
         {
+<<<<<<< HEAD
             geometryUrl: "resources/3Dmodels/lowpolytree2/lowpolytree2.obj",
             materialUrl: "resources/3Dmodels/lowpolytree2/lowpolytree2.mtl",
+=======
+            geometryUrl: "resources/models/lowpolytree/lowpolytree.obj",
+            materialUrl: "resources/models/lowpolytree/lowpolytree.mtl",
+>>>>>>> 89c7d288e7b1449971819eddf934ea9be63fc6e4
             parameters: {
                 upperPlacementBound: 300, // Tree line, upper
                 lowerPlacementBound: 60, //Tree line lower
@@ -66,8 +71,13 @@ window.addEventListener('load', () => {
             }
         },
         {
+<<<<<<< HEAD
             geometryUrl: "resources/3Dmodels/rock1/rock1.obj",
             materialUrl: "resources/3Dmodels/rock1/rock1.mtl",
+=======
+            geometryUrl: "resources/models/rock2/rock2.obj",
+            materialUrl: "resources/models/rock2/rock2.mtl",
+>>>>>>> 89c7d288e7b1449971819eddf934ea9be63fc6e4
             parameters: {
                 upperPlacementBound: 1000,
                 lowerPlacementBound: 0,
@@ -147,6 +157,7 @@ window.addEventListener('load', () => {
 
 			// update terrain lod.
 			let position = app.terrain.worldToLocal(controls.object.position.clone());
+
 			app.terrain.geometry.update(position.x, position.z, 80);
 		});
 	});
@@ -184,12 +195,12 @@ window.addEventListener('load', () => {
 
         let materialLoader = new THREE.MTLLoader();
 
-        materialLoader.load('resources/3Dmodels/Plane/plane222.mtl', function(mat) {
+        materialLoader.load('resources/models/Plane/plane222.mtl', function(mat) {
             mat.preload();
             let objectLoader = new THREE.OBJLoader();
 
             objectLoader.setMaterials(mat);
-            objectLoader.load('resources/3Dmodels/Plane/plane222.obj', function (obj) {
+            objectLoader.load('resources/models/Plane/plane222.obj', function (obj) {
 
                 obj.scale.set(0.8, 0.8, 0.8);
 

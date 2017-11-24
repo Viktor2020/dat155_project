@@ -36,12 +36,12 @@ class TerrainBufferGeometry extends THREE.PlaneBufferGeometry {
     init(image) {
 
     	// get heightmap data
-    	let heightmap = Utilities.getHeightmapData(image, this.totalNumberOfSubdivisions + 1);
+    	this.heightmap = Utilities.getHeightmapData(image, this.totalNumberOfSubdivisions + 1);
 
     	// assign Y-values
     	let v = 0;
-    	for (let i = 0; i < heightmap.length; i++) {
-    		this.attributes.position.array[v + 1] = heightmap[i] * this.height;
+    	for (let i = 0; i < this.heightmap.length; i++) {
+    		this.attributes.position.array[v + 1] = this.heightmap[i] * this.height;
     		v += 3;
     	}
 
@@ -322,5 +322,34 @@ class TerrainBufferGeometry extends THREE.PlaneBufferGeometry {
     	this._cache.x = x;
     	this._cache.z = z;
     	this._cache.radius = radius;
+    }
+
+    /**
+     * [getHeightAt description]
+     * @param  {[type]} position [description]
+     * @return {[type]}          [description]
+     */
+    getHeightAt(position) {
+
+        if (0 > position.x || position.x > this.width || 0 > position.z || position.z > this.width) {
+            return 0;
+        }
+
+        let v = this.totalNumberOfSubdivisions;
+
+        let factor = v / this.width;
+
+        let x_max = Math.ceil(position.x * factor);
+        let x_min = Math.floor(position.x * factor);
+
+        let z_max = Math.ceil(position.z * factor);
+        let z_min = Math.floor(position.z * factor);
+
+        let h0 = this.heightmap[(z_max * (v + 1)) + x_max] * this.height;
+        let h1 = this.heightmap[(z_max * (v + 1)) + x_min] * this.height;
+        let h2 = this.heightmap[(z_min * (v + 1)) + x_max] * this.height;
+        let h3 = this.heightmap[(z_min * (v + 1)) + x_min] * this.height;
+
+        return Math.min(h0, h1, h2, h3);
     }
 }
