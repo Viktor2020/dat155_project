@@ -57,8 +57,8 @@ window.addEventListener('load', () => {
             parameters: {
                 upperPlacementBound: 300, // Tree line, upper
                 lowerPlacementBound: 100, //Tree line lower
-                minScale: 0.1,
-                maxScale: 1,
+                minScale: 0.5,
+                maxScale: 1.5,
                 size: 1,// size*scale = minimum distance to next object
                 verticalDisplacement: 0, // vd*scale used to move the object down in to the ground.
                 numberOfObjects: 100,
@@ -71,8 +71,8 @@ window.addEventListener('load', () => {
             parameters: {
                 upperPlacementBound: 300, // Tree line, upper
                 lowerPlacementBound: 60, //Tree line lower
-                minScale: 0.1,
-                maxScale: 1,
+                minScale: 0.3,
+                maxScale: 0.6,
                 size: 1,// size*scale = minimum distance to next object
                 verticalDisplacement: 0, // vd*scale used to move the object down in to the ground.
                 numberOfObjects: 5
@@ -222,6 +222,7 @@ window.addEventListener('load', () => {
                 obj.scale.set(0.8, 0.8, 0.8);
 
                 let plane = new Plane(obj,15);
+
 
                 app.updatables.push((delta) => {
                     plane.update(delta);

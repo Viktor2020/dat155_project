@@ -25,8 +25,8 @@ class Plane {
 
         this.index = this.index % 1;
 
-        let newz = this.curve.getPoint(this.index).y;
-        let newx = this.curve.getPoint(this.index).x;
+        let newz = this.curve.getPoint(this.index).y + 1500;
+        let newx = this.curve.getPoint(this.index).x + 1500;
         this.obj.position.setX(newx);
         this.obj.position.setZ(newz);
 
