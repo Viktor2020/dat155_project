@@ -147,6 +147,7 @@ window.addEventListener('load', () => {
 
 			// update terrain lod.
 			let position = app.terrain.worldToLocal(controls.object.position.clone());
+
 			app.terrain.geometry.update(position.x, position.z, 80);
 		});
 	});
