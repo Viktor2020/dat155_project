@@ -141,7 +141,8 @@ window.addEventListener('load', () => {
 			player.position.copy(controls.object.position);
 
 			// update terrain lod.
-			app.terrain.geometry.update(controls.object.position.x - app.terrain.position.x, controls.object.position.z - app.terrain.position.z, 80);
+			let position = app.terrain.worldToLocal(controls.object.position.clone());
+			app.terrain.geometry.update(position.x, position.z, 80);
 		});
 	});
 	//add water with dynamic envMapping

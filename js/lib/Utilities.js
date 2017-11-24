@@ -70,7 +70,6 @@ class Utilities {
 
 			loader.load(url, (materials) => {
 				materials.preload();
-				console.log(materials);
 				resolve(materials);
 			}, null, (error) => {
 				reject(error);

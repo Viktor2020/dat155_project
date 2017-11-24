@@ -45,7 +45,7 @@ class TerrainBufferGeometry extends THREE.PlaneBufferGeometry {
     		v += 3;
     	}
 
-    	// center geometry around local origo.
+    	// move such that the center is in the corner and not in origo.
     	this.translate(this.width / 2, 0, this.width / 2);
 
     	// recompute normals.
@@ -311,6 +311,8 @@ class TerrainBufferGeometry extends THREE.PlaneBufferGeometry {
     	if (x === this._cache.x && z === this._cache.z && radius === this._cache.radius) {
     		return;
     	}
+
+        console.log(x, z);
     	
     	this.quadtree.update({ x: x, y: z, radius });
     	let nodes = this.quadtree.tree.getLeafNodes();
