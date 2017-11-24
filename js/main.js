@@ -97,31 +97,17 @@ window.addEventListener('load', () => {
             }
         },
         {
-            geometryUrl: "resources/models/rock1/rock1.obj",
-            materialUrl: "resources/models/rock1/rock1.mtl",
+            geometryUrl: "resources/models/rock_best/rock.obj",
+            materialUrl: "resources/models/rock_best/rock.mtl",
             parameters: {
                 upperPlacementBound: 1000,
                 lowerPlacementBound: 0,
-                minScale: 0.3,
-                maxScale: 3,
-                size: 1,// size*scale = minimum distance to next object
+                minScale: 10,
+                maxScale: 50,
+                size: 100,// size*scale = minimum distance to next object
                 verticalDisplacement: 0, // vd*scale used to move the object down in to the ground.
                 numberOfObjects: 100,
 				type:1//type = tree
-            }
-        },
-        {
-            geometryUrl: "resources/models/rock3/rock3.obj",
-            materialUrl: "resources/models/rock3/rock3.mtl",
-            parameters: {
-                upperPlacementBound: 1000,
-                lowerPlacementBound: 0,
-                minScale: 0.3,
-                maxScale: 3,
-                size: 1,// size*scale = minimum distance to next object
-                verticalDisplacement: 0, // vd*scale used to move the object down in to the ground.
-                numberOfObjects: 5,
-                type:1//type = tree
             }
         }
     ].map((source) => {

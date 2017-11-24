@@ -23,9 +23,10 @@ class TerrainElements {
         obj.position.set(x,0,z);
         obj.scale.set(widthScale,heightScale,depthScale);
 
-        let pos = this.app.terrain.worldToLocal(obj.position.clone());
-
         let y = 0;
+        //Generate terain height pos
+        obj.position.set(x,y,z);
+        let pos = this.app.terrain.worldToLocal(obj.position.clone());
 
         y = this.app.terrain.geometry.getHeightAt(pos)+ ((height*heightScale)*0.25);
 
@@ -41,6 +42,8 @@ class TerrainElements {
         }
 
         obj.position.set(x,y,z);
+        obj.scale.set(widthScale,heightScale,depthScale);
+
         this.nodelist.push(obj)
         this.elements.push(element);
         return true;
