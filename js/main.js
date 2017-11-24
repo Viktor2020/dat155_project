@@ -66,8 +66,8 @@ window.addEventListener('load', () => {
             }
         },
         {
-            geometryUrl: "resources/3Dmodels/rock1/rock1.obj",
-            materialUrl: "resources/3Dmodels/rock1/rock1.mtl",
+            geometryUrl: "resources/3Dmodels/rock2/rock2.obj",
+            materialUrl: "resources/3Dmodels/rock2/rock2.mtl",
             parameters: {
                 upperPlacementBound: 1000,
                 lowerPlacementBound: 0,
