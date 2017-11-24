@@ -1,26 +1,29 @@
 class TerrainElements {
+    //TODO Cleanup
     constructor(objects) {
         this.elements = [];
         this.nodelist = [];
-        this.objects = objects;
+        this.objects = objects; //TODO probably not nececary, posibly usefull
         //this.nrOfTrees = 50;
         //this.nrOfRocks = 100;
 
-        initTerrainElements(objects);
+        this.initTerrainElements(this.objects);
 
     }
 
-    placeElement(x,z,w,d,maxh,minh,obj) {
+    //placeElement(x,z,w,d,maxh,minh,obj) {
+    placeElement(x,z,w,d,obj) {
         let y = 0;
         let element = new TerrainElement(x,z,w,d);
-        let newObject = obj.clone();
 
-        if(element.intersectsAny(this.elements)) return false;
-        if(y > this.maxH || y < this.minH ) return false;
+        //TODO ERROR Here!!
+        //if(element.intersectsAny(this.elements)) return false;
+        //if(y > this.maxH || y < this.minH ) return false;
 
-        newObject.position.set(x,y,z);
-        nodelist.push(newObject)
+        obj.position.set(x,y,z);
+        this.nodelist.push(obj)
         this.elements.push(element);
+        return true;
     }
 
     initTerrainElements(objects) {
@@ -42,9 +45,12 @@ class TerrainElements {
         }*/
         for(let i = 0; i < objects.length; i++ ){ //For all objects
             let obj = objects[i];
+            let newobj = obj.obj.clone();
+            console.log(i)
             for(let j = 0 ; j < obj.parameters.numberOfObjects; j++){ //for each element to be created
-                let success = this.placeElement(Math.random()*500,Math.random()*500,100,100,obj);
-                if(!success) i-= 1;
+                console.log(j)
+                let success = this.placeElement(Math.random()*500, Math.random()*500, 100, 100, newobj);
+                if(!success) j-= 1;
             }
         }
     }//END initTerrainElements

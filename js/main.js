@@ -50,7 +50,6 @@ window.addEventListener('load', () => {
 
     //Load a list of objects!
     //{ geometryUrl: "object-url", materialUrl: "material-url"}
-
     app.extend(Promise.all([// I'll load them later
         {
             geometryUrl: "resources/3Dmodels/lowpolytree/lowpolytree.obj",
@@ -62,7 +61,7 @@ window.addEventListener('load', () => {
                 maxScale: 70,
                 size: 1,// size*scale = minimum distance to next object
                 verticalDisplacement: 0, // vd*scale used to move the object down in to the ground.
-                numberOfObjects: 50
+                numberOfObjects: 5
             }
         },
         {
@@ -75,13 +74,13 @@ window.addEventListener('load', () => {
                 maxScale: 70,
                 size: 1,// size*scale = minimum distance to next object
                 verticalDisplacement: 0, // vd*scale used to move the object down in to the ground.
-                numberOfObjects: 50
+                numberOfObjects: 5
             }
         }
     ].map((source) => {
         return Utilities.OBJLoader(source.geometryUrl, Utilities.MTLLoader(source.materialUrl)).then((object) => {
             return Promise.resolve({
-                object,
+                obj: object,
                 parameters: source.parameters
             });
         });
