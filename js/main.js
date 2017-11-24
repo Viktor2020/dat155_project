@@ -3,31 +3,48 @@
 window.addEventListener('load', () => {
 	let app = new App();
 
+	app.extend((app) => {
+		// lighting.
+		let directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+		directionalLight.position.set(0.01, 1, 0);
+		app.scene.add(directionalLight); // for testing purposes.
+
+		let ambientLight = new THREE.AmbientLight(0x404040);
+		app.scene.add(ambientLight);
+	});
+
 	// setup terrain.
-	app.extend(Utilities.loadImage('resources/textures/heightmap.png').then((heightmapImage) => {
+	let resources = Promise.all([
+		Utilities.loadImage('resources/textures/heightmap.png'),
+		new THREE.TextureLoader().load('resources/textures/grass_01.jpg'),
+		new THREE.TextureLoader().load('resources/textures/snowy_rock_01.png'),
+		new THREE.TextureLoader().load('resources/textures/splatmap_01.png')
+	]);
+
+	app.extend(resources.then((resources) => {
 		// return the callback function that will be called once the heightmap has been loaded.
 		return (app) => {
 			let width = 3000;
 
 			let geometry = new TerrainBufferGeometry({
-				heightmapImage,
+				heightmapImage: resources[0],
 				width,
 				height: 450,
 				levelsOfDetail: 5,
 				numberOfSubdivisions: 16
 			});
 
-			let grass = new THREE.TextureLoader().load('resources/textures/grass_01.jpg');
+			let grass = resources[1];
 	    	grass.wrapS = THREE.RepeatWrapping;
 			grass.wrapT = THREE.RepeatWrapping;
 			grass.repeat.set(width/40, width/40);
 
-	        let snowyRock = new THREE.TextureLoader().load('resources/textures/snowy_rock_01.png');
+			let snowyRock = resources[2];
 	        snowyRock.wrapS = THREE.RepeatWrapping;
 	        snowyRock.wrapT = THREE.RepeatWrapping;
 	        snowyRock.repeat.set(width/80, width/80);
 
-        	let splatMap1 = new THREE.TextureLoader().load('resources/textures/splatmap_01.png');
+        	let splatMap1 = resources[3];
 
 	        let material = new TextureSplattingMaterial({
 	            color: 0x777777,
@@ -37,14 +54,14 @@ window.addEventListener('load', () => {
 	        });
 
 			app.terrain = new THREE.Mesh(geometry, material);
+
 			//app.terrain.position.x = -width/2;
 			//app.terrain.position.z = -width/2;
+			
+			app.terrain.position.x = 500;
+			app.terrain.position.z = 500;
 
 			app.scene.add(app.terrain);
-
-			let light = new THREE.DirectionalLight(0xffffff, 2);
-			light.position.set(0.01, 1, 0);
-			app.scene.add(light); // for testing purposes.
 		};
 	}));
 
