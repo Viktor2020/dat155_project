@@ -1,12 +1,11 @@
 # Exported from 3D Builder
 
 newmtl White
-Ns 96.078431
-Ka 0.000000 0.000000 0.000000
+Ns 0
+Ka 0.210000 0.105000 0.030000
 Kd 0.210000 0.105000 0.030000
-Ks 0.210000 0.105000 0.030000
 Ni 1.000000
 d 1.000000
-illum 2
+illum 1
 
 # map_Kd rock1.jpg
