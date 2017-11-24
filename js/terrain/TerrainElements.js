@@ -19,8 +19,8 @@ class TerrainElements {
         let height = Math.abs(bbox.min.y - bbox.max.y);
         console.log("treeHeight "+height);
 
-        obj.scale.set(widthScale,heightScale,depthScale);
         obj.position.set(x,0,z);
+        obj.scale.set(widthScale,heightScale,depthScale);
 
         let pos = this.app.terrain.worldToLocal(obj.position.clone());
 
@@ -52,8 +52,8 @@ class TerrainElements {
             for(let j = 0 ; j < obj.parameters.numberOfObjects; j++){ //for each element to be created
                 console.log(j)
                 let newobj = obj.obj.clone();
-                let x = Math.random()*2900 + 50;
-                let z = Math.random()*2900 + 50;
+                let x = Math.random()*(this.app.terrain.geometry.width - 300) + 150;
+                let z = Math.random()*(this.app.terrain.geometry.width - 300) + 150;
                 let size = (Math.random() * (obj.parameters.maxScale - obj.parameters.minScale)) + obj.parameters.minScale;
                 //let size = 2;
                 let success = this.placeElement(x,z, size, size,size ,obj.parameters.upperPlacementBound,obj.parameters.lowerPlacementBound, newobj);

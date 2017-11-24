@@ -62,7 +62,7 @@ window.addEventListener('load', () => {
                 maxScale: 1,
                 size: 1,// size*scale = minimum distance to next object
                 verticalDisplacement: 0, // vd*scale used to move the object down in to the ground.
-                numberOfObjects: 5,
+                numberOfObjects: 100,
 				type:0
             }
         },
@@ -76,7 +76,7 @@ window.addEventListener('load', () => {
                 maxScale: 3,
                 size: 1,// size*scale = minimum distance to next object
                 verticalDisplacement: 0, // vd*scale used to move the object down in to the ground.
-                numberOfObjects: 5,
+                numberOfObjects: 100,
 				type:1
             }
         }
