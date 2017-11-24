@@ -26,6 +26,7 @@ class CameraControls {
 
         this.yaw = new THREE.Object3D();
         this.pitch = new THREE.Object3D();
+        this.yaw.position.y = 10;
         this.yawChange = 0;
         this.pitchChange = 0;
 
