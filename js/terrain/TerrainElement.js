@@ -1,3 +1,5 @@
+"use strict";
+
 class TerrainElement {
     constructor(x,z,w,d) {
         this.x = x;
