@@ -53,26 +53,26 @@ window.addEventListener('load', () => {
     //{ geometryUrl: "object-url", materialUrl: "material-url"}
     app.extend(Promise.all([// I'll load them later
         {
-            geometryUrl: "resources/3Dmodels/lowpolytree/lowpolytree.obj",
-            materialUrl: "resources/3Dmodels/lowpolytree/lowpolytree.mtl",
+            geometryUrl: "resources/3Dmodels/lowpolytree2/lowpolytree2.obj",
+            materialUrl: "resources/3Dmodels/lowpolytree2/lowpolytree2.mtl",
             parameters: {
                 upperPlacementBound: 300, // Tree line, upper
                 lowerPlacementBound: 60, //Tree line lower
-                minScale: 10,
-                maxScale: 70,
+                minScale: 0.3,
+                maxScale: 1,
                 size: 1,// size*scale = minimum distance to next object
                 verticalDisplacement: 0, // vd*scale used to move the object down in to the ground.
                 numberOfObjects: 5
             }
         },
         {
-            geometryUrl: "resources/3Dmodels/rock2/rock2.obj",
-            materialUrl: "resources/3Dmodels/rock2/rock2.mtl",
+            geometryUrl: "resources/3Dmodels/rock1/rock1.obj",
+            materialUrl: "resources/3Dmodels/rock1/rock1.mtl",
             parameters: {
                 upperPlacementBound: 1000,
                 lowerPlacementBound: 0,
-                minScale: 10,
-                maxScale: 70,
+                minScale: 0.3,
+                maxScale: 1,
                 size: 1,// size*scale = minimum distance to next object
                 verticalDisplacement: 0, // vd*scale used to move the object down in to the ground.
                 numberOfObjects: 5
