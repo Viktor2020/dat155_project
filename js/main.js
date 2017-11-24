@@ -80,15 +80,11 @@ window.addEventListener('load', () => {
         }
     ].map((source) => {
         return Utilities.OBJLoader(source.geometryUrl, Utilities.MTLLoader(source.materialUrl)).then((object) => {
-<<<<<<< HEAD
-            return {
-                object,
-=======
+
             return Promise.resolve({
                 obj: object,
->>>>>>> origin/master
                 parameters: source.parameters
-            };
+			});
         });
     })).then((objects) => { //When promises has resolved (models loaded)
 
