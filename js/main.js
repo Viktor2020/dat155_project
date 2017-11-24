@@ -62,7 +62,7 @@ window.addEventListener('load', () => {
                 size: 1,// size*scale = minimum distance to next object
                 verticalDisplacement: 0, // vd*scale used to move the object down in to the ground.
                 numberOfObjects: 100,
-				type:0
+				type:0//type = tree
             }
         },
         {
@@ -75,7 +75,8 @@ window.addEventListener('load', () => {
                 maxScale: 0.6,
                 size: 1,// size*scale = minimum distance to next object
                 verticalDisplacement: 0, // vd*scale used to move the object down in to the ground.
-                numberOfObjects: 5
+                numberOfObjects: 5,
+                type:0//type = tree
             }
         },
         {
@@ -89,7 +90,7 @@ window.addEventListener('load', () => {
                 size: 1,// size*scale = minimum distance to next object
                 verticalDisplacement: 0, // vd*scale used to move the object down in to the ground.
                 numberOfObjects: 100,
-				type:1
+				type:1//type = tree
             }
         },
         {
@@ -102,7 +103,8 @@ window.addEventListener('load', () => {
                 maxScale: 3,
                 size: 1,// size*scale = minimum distance to next object
                 verticalDisplacement: 0, // vd*scale used to move the object down in to the ground.
-                numberOfObjects: 5
+                numberOfObjects: 5,
+                type:1//type = tree
             }
         }
     ].map((source) => {
@@ -206,6 +208,29 @@ window.addEventListener('load', () => {
             cubecam.update(app.renderer,app.scene);
         });
 	});
+
+    app.extend((app) => {
+        //Inner skydome is used to get a mre natural fog effect while still makeing the skydome visible thru the fog
+    let geometry = new THREE.SphereGeometry(2000, 60, 60);
+    let material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, opacity: 0.7,transparent:true, fog: true});
+
+    this.innerSkyDome = new THREE.Mesh(geometry, material);
+    this.innerSkyDome.scale.set(-1, 1, 1);
+    this.innerSkyDome.eulerOrder = 'XZY';
+    this.innerSkyDome.renderDepth = 1000.0;
+    app.scene.add(this.innerSkyDome);
+
+    //The outer dome makes the inner skydome more visible and makes the terrain visible behind the inner skydome
+    let geometry1 = new THREE.SphereGeometry(3500, 60, 60);
+    let material1 = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture('resources/img/skybox/panorama1.jpg'), side: THREE.DoubleSide, opacity: 1,transparent:false, fog: false});
+
+    this.outerSkyDome = new THREE.Mesh(geometry1, material1);
+    this.outerSkyDome.scale.set(-1, 1, 1);
+    this.outerSkyDome.eulerOrder = 'XZY';
+    this.outerSkyDome.renderDepth = 1000.0;
+    app.scene.add(this.outerSkyDome);
+    });
+
 
     //add a circling plane
     app.extend((app) => {

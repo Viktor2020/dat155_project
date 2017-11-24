@@ -11,12 +11,13 @@ class TerrainElements {
 
     }
 
-    placeElement(x,z,widthScale,depthScale,heightScale,maxh,minh,obj) {
+    placeElement(x,z,widthScale,depthScale,heightScale,maxh,minh,obj,type) {
     //placeElement(x,z,widthScale,depthScale,obj) {
         let bbox = new THREE.Box3().setFromObject(obj);
         let width = Math.abs(bbox.min.x - bbox.max.x);
         let depth = Math.abs(bbox.min.z - bbox.max.z);
         let height = Math.abs(bbox.min.y - bbox.max.y);
+
         console.log("treeHeight "+height);
 
         obj.position.set(x,0,z);
@@ -27,6 +28,7 @@ class TerrainElements {
         let y = 0;
 
         y = this.app.terrain.geometry.getHeightAt(pos)+ ((height*heightScale)*0.25);
+
         let element = new TerrainElement(x,z,widthScale*width,depthScale*depth);
 
         if(element.intersectsAny(this.elements)) {
@@ -55,8 +57,7 @@ class TerrainElements {
                 let x = Math.random()*(this.app.terrain.geometry.width - 300) + 150;
                 let z = Math.random()*(this.app.terrain.geometry.width - 300) + 150;
                 let size = (Math.random() * (obj.parameters.maxScale - obj.parameters.minScale)) + obj.parameters.minScale;
-                //let size = 2;
-                let success = this.placeElement(x,z, size, size,size ,obj.parameters.upperPlacementBound,obj.parameters.lowerPlacementBound, newobj);
+                let success = this.placeElement(x,z, size, size,size ,obj.parameters.upperPlacementBound,obj.parameters.lowerPlacementBound, newobj,obj.parameters.type);
                  if(!success) {
                     j-= 1;
                     err ++;
