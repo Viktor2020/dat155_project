@@ -49,7 +49,8 @@ window.addEventListener('load', () => {
 	}));
 
     //Load a list of objects!
-    //{ geometryUrl: "object-url", materialUrl: "material-url"},
+
+    //{ geometryUrl: "object-url", materialUrl: "material-url"}
     app.extend(Promise.all([// I'll load them later
         {
             geometryUrl: "resources/3Dmodels/lowpolytree/lowpolytree.obj",
@@ -60,7 +61,8 @@ window.addEventListener('load', () => {
                 minScale: 10,
                 maxScale: 70,
                 size: 1,// size*scale = minimum distance to next object
-                verticalDisplacement: 0 // vd*scale used to move the object down in to the ground.
+                verticalDisplacement: 0, // vd*scale used to move the object down in to the ground.
+                numberOfObjects: 5
             }
         },
         {
@@ -72,13 +74,19 @@ window.addEventListener('load', () => {
                 minScale: 10,
                 maxScale: 70,
                 size: 1,// size*scale = minimum distance to next object
-                verticalDisplacement: 0 // vd*scale used to move the object down in to the ground.
+                verticalDisplacement: 0, // vd*scale used to move the object down in to the ground.
+                numberOfObjects: 5
             }
         }
     ].map((source) => {
         return Utilities.OBJLoader(source.geometryUrl, Utilities.MTLLoader(source.materialUrl)).then((object) => {
+<<<<<<< HEAD
             return {
                 object,
+=======
+            return Promise.resolve({
+                obj: object,
+>>>>>>> origin/master
                 parameters: source.parameters
             };
         });
@@ -86,7 +94,7 @@ window.addEventListener('load', () => {
 
         return (app) => {
             //Parse that list to decorations class
-            let decorations = new Decorations(objects);
+            let decorations = new TerrainElements(objects);
             app.scene.add(decorations);
 
             // maybe do something else..

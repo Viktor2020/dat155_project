@@ -67,6 +67,7 @@ class Utilities {
 	static MTLLoader(url) {
 		return new Promise((resolve, reject) => {
 			let loader = new THREE.MTLLoader();
+
 			loader.load(url, (materials) => {
 				materials.preload();
 				resolve(materials);
@@ -81,18 +82,21 @@ class Utilities {
 	 */
 	static OBJLoader(url, materials = null) {
 		return Promise.resolve(materials).then((materials) => {
-			let loader = new THREE.OBJLoader();
+			return new Promise((resolve, reject) => {
 
-			// if materials were supplied.
-			if (materials !== null) {
-				loader.setMaterials(materials);
-			}
+				let loader = new THREE.OBJLoader();
 
-			// load a resource
-			loader.load(url, (object) => {
-				return Promise.resolve(object);
-			}, null, (error) => {
-				return Promise.reject(error);
+				// if materials were supplied.
+				if (materials !== null) {
+					loader.setMaterials(materials);
+				}
+
+				// load a resource
+				loader.load(url, (object) => {
+					resolve(object);
+				}, null, (error) => {
+					reject(error);
+				});
 			});
 		});
 	}
