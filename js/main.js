@@ -49,6 +49,7 @@ window.addEventListener('load', () => {
 	}));
 
     //Load a list of objects!
+
     //{ geometryUrl: "object-url", materialUrl: "material-url"}
     app.extend(Promise.all([// I'll load them later
         {
@@ -65,8 +66,8 @@ window.addEventListener('load', () => {
             }
         },
         {
-            geometryUrl: "resources/3Dmodels/rock1/rock1.obj",
-            materialUrl: "resources/3Dmodels/rock1/rock1.mtl",
+            geometryUrl: "resources/3Dmodels/rock2/rock2.obj",
+            materialUrl: "resources/3Dmodels/rock2/rock2.mtl",
             parameters: {
                 upperPlacementBound: 1000,
                 lowerPlacementBound: 0,
@@ -79,17 +80,21 @@ window.addEventListener('load', () => {
         }
     ].map((source) => {
         return Utilities.OBJLoader(source.geometryUrl, Utilities.MTLLoader(source.materialUrl)).then((object) => {
+
             return Promise.resolve({
                 obj: object,
                 parameters: source.parameters
-            });
+			});
         });
     })).then((objects) => { //When promises has resolved (models loaded)
-        console.log(objects);
+
         return (app) => {
             //Parse that list to decorations class
             let decorations = new TerrainElements(objects);
-            app.scene.add(decorations);
+            for(let i = 0; i < decorations.nodelist.length;i++) {
+                app.scene.add(decorations.nodelist[i]);
+            }
+            //app.scene.add(decorations);
 
             // maybe do something else..
         }

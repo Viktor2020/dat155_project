@@ -125,7 +125,6 @@ class CameraControls {
         let x = 0;
         let y = 0;
         let z = 0;
-        let yaw = 0;
 
         //add velocity in a particular direction
         //multiply by delta to ensure same speed between frames

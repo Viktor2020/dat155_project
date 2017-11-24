@@ -12,14 +12,15 @@ class Decorations extends THREE.Object3D {
         //TODO: Unwrap objects: 3DModel, parameters
 
         //objects : 3DModel, parameters
-        console.log(objects);
+        super();
 
         //this.objectList = this.init(objects);
 
     }//END constructor
 
-
+    //Loads objects and stores them in a object list
     init(objects) {
+
         let witth = 3000;
         let numberOfElements = 100;
 
