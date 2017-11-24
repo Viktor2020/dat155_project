@@ -45,10 +45,8 @@ class TerrainElements {
         }*/
         for(let i = 0; i < objects.length; i++ ){ //For all objects
             let obj = objects[i];
-            let newobj = obj.obj.clone();
-            console.log(i)
             for(let j = 0 ; j < obj.parameters.numberOfObjects; j++){ //for each element to be created
-                console.log(j)
+                let newobj = obj.obj.clone();
                 let success = this.placeElement(Math.random()*500, Math.random()*500, 100, 100, newobj);
                 if(!success) j-= 1;
             }
