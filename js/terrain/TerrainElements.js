@@ -18,7 +18,7 @@ class TerrainElements {
         if(element.intersectsAny(this.elements)) return false;
         if(y > maxh || y < minh) return false;
 
-        obj.scale.set(50,50,50);
+        obj.scale.set(w,h,d);
         obj.position.set(x,y,z);
         this.nodelist.push(obj)
         this.elements.push(element);
@@ -39,8 +39,9 @@ class TerrainElements {
                 let newobj = obj.obj.clone();
                 let x = Math.random()*3000 - 1500;
                 let y = Math.random()*3000 - 1500;
-                let size = (Math.random * (obj.maxScale - obj.minScale)) + obj.minScale;
-                let success = this.placeElement(x,y, size, size,size ,obj.upperPlacementBound,obj.lowerPlacementBound, newobj);
+                let size = (Math.random() * (obj.parameters.maxScale - obj.parameters.minScale)) + obj.parameters.minScale;
+                //alert(typeof obj.parameters.minScale === "undefined");
+                let success = this.placeElement(x,y, size, size,size ,obj.parameters.upperPlacementBound,obj.parameters.lowerPlacementBound, newobj);
                  if(!success) {
                     j-= 1;
                     err ++;
